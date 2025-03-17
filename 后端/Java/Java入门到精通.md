@@ -305,7 +305,7 @@ public class VolatileExample {
 `volatile` 关键字确保了变量的可见性，但调用方式与普通变量相同。
 
 ```java
-   public class VolatileExampl e {
+   public class VolatileExample {
        public volatile boolean flag = false;
    }
    
