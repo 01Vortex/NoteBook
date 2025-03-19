@@ -6,8 +6,8 @@
 ---
 ## 🚀 动态统计  
 <!-- GitHub统计卡片 -->
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=YOUR_USERNAME&show_icons=true&theme=dark&hide_title=true&hide=prs,issues)  
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=YOUR_USERNAME&layout=compact&theme=dark)  
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=01Vortex&show_icons=true&theme=dark&hide_title=true&hide=prs,issues)  
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=01Vortex&layout=compact&theme=dark)  
 ![Wakatime](https://wakatime.com/badge/user/YOUR_WAKATIME_ID.svg)  
 
 ---
@@ -70,6 +70,6 @@
 <!-- 访客计数 -->  
 ![Visitor Count](https://visitor-badge.glitch.me/badge?page_id=YOUR_USERNAME.YOUR_REPO_NAME)  
 <!-- 连续提交记录 -->  
-![GitHub Streak](https://streak-stats.demolab.com/?user=YOUR_USERNAME&theme=dark)  
+![GitHub Streak](https://streak-stats.demolab.com/?user=01Vortex&theme=dark)  
 <!-- 项目许可证 -->  
-![License](https://img.shields.io/github/license/YOUR_USERNAME/YOUR_REPO_NAME)
+![License](https://img.shields.io/github/license/01Vortex/YOUR_REPO_NAME)
