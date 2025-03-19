@@ -6,6 +6,7 @@
 *.d64fsl
 *.p64fsl
 *.lx64fsl
+*.obsidian
 *.lx32fsl
 *.dx64fsl
 *.dx32fsl
