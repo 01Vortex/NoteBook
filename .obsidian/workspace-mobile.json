@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "前端/JSON.md",
+                "file": "Linux/Linux CentOS7.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "JSON"
+              "title": "Linux CentOS7"
             }
           }
         ],
@@ -113,7 +113,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "README.md",
+            "file": "Linux/Linux CentOS7.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -170,8 +170,18 @@
   },
   "active": "eaa7a00f576c74d5",
   "lastOpenFiles": [
-    "前端/HTML.md",
+    "Linux/Linux常用和通用命令.md",
+    "Linux/Linux CentOS7.md",
+    "Linux/Linux Ubuntu.md",
+    "README.md",
+    "服务端/Python.md",
+    "服务端/Servlet.md",
+    "服务端/JSP.md",
+    "服务端/Java.md",
+    "服务端/Maven.md",
     "前端/Vue3.md",
+    "前端/JSON.md",
+    "前端/HTML.md",
     "服务端/PHP.md",
     "前端/JavaScript.md",
     "数据库/MySQL.md",
@@ -183,8 +193,6 @@
     "安卓开发/Android.md",
     "Spring Framework/Spring Framework M & E/Spring MVC.md",
     "Spring Framework/Spring Framework M & E/Spring AOP.md",
-    "README.md",
-    "服务端/Java.md",
     "其他/IMG/Screenshot_20241012_023234.jpg",
     "其他/IMG/Screenshot_20241012_023647.jpg",
     "其他/问题/渗透测试遇见的问题.md",
@@ -196,25 +204,17 @@
     "其他/IMG/Screenshot_20241010_113622.jpg",
     "其他/IMG",
     "其他/项目分析/功能模块分析.md",
-    "其他/项目分析/学习中遇到的问题.md",
     "其他/项目分析",
     "其他",
     "z其他/IMG/Screenshot_20241010_113622.jpg",
     "z其他/IMG/IMG_20241010_113700.jpg",
-    "z其他/项目分析/学习中遇到的问题.md",
-    "z其他/项目分析/QQ9.md",
     "z其他/IMG/Screenshot_20241012_023647.jpg",
     "z其他/IMG/Screenshot_20241012_023234.jpg",
-    "z其他/问题/渗透测试遇见的问题.md",
-    "z其他/项目分析/功能模块分析.md",
     "z其他/问题",
     "z其他/IMG",
     "z其他/项目分析",
     "z其他",
-    "运维/Ubuntu24.04服务器.md",
     "运维",
-    "安卓开发",
-    "01Vortex/Python渗透测试.md",
-    "前端/Markdown.md"
+    "安卓开发"
   ]
 }
