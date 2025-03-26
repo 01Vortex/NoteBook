@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Linux/Linux CentOS7.md",
+                "file": "Spring Framework/Spring Framework 5.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Linux CentOS7"
+              "title": "Spring Framework 5"
             }
           }
         ],
@@ -113,7 +113,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "Linux/Linux CentOS7.md",
+            "file": "Spring Framework/Spring Framework 5.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -170,8 +170,8 @@
   },
   "active": "eaa7a00f576c74d5",
   "lastOpenFiles": [
-    "Linux/Linux常用和通用命令.md",
     "Linux/Linux CentOS7.md",
+    "Linux/Linux常用和通用命令.md",
     "Linux/Linux Ubuntu.md",
     "README.md",
     "服务端/Python.md",
