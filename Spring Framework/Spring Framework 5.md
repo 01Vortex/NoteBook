@@ -101,7 +101,7 @@ public class AppConfig {
     // Bean definitions can be added here if needed
 }
 ```
-
+==ComponentScan 注解用于告诉Spring在指定的包及其子包中扫描带有 @Component、@Service、@Repository、@Controller 等注解的类，并将它们注册为Spring容器中的bean==
 ### 3. 创建应用程序组件
 
 创建一个简单的服务类和一个控制器类。
@@ -130,18 +130,22 @@ package com.example.controller;
 import com.example.service.MyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MyController {
-    private final MyService myService;
+    private MyService myService;
 
     @Autowired
     public MyController(MyService myService) {
         this.myService = myService;
     }
 
-    public void printMessage() {
-        System.out.println(myService.getMessage());
+    @GetMapping("/message")
+    @ResponseBody
+    public String printMessage() {
+        return myService.getMessage();
     }
 }
 ```
@@ -231,6 +235,55 @@ public class MyBean {
     // Getters and Setters
 }
 ```
+
+
+#### 区别
+在Spring框架中，基于注解和基于Java配置是两种不同的方式来管理和配置bean。以下是它们的主要区别：
+
+##### 语法和实现方式
+- **注解**：
+    - 直接在Java类中使用注解，如`@Component`、`@Service`、`@Repository`、`@Controller`等，将类标记为bean。
+    - 使用`@Autowired`、`@Resource`等注解实现依赖注入。
+    - 使用`@Configuration`注解的类内部可以包含用`@Bean`注解的方法，这些方法返回的对象会被注册为bean。
+- **Java配置**：
+    - 创建一个用`@Configuration`注解标记的Java类，该类充当配置类。
+    - 在配置类中使用`@Bean`注解的方法定义bean，方法的返回值即为bean实例。
+    - 可以使用Java代码进行更复杂的配置逻辑，如条件判断、循环等。
+
+##### 配置的可读性和维护性
+- **注解**：
+    - 配置分散在各个Java类中，可能需要查看多个文件才能了解完整的配置。
+    - 对于简单的配置，注解方式较为直观和简洁。
+- **Java配置**：
+    - 所有配置集中在一个或多个Java配置类中，便于整体理解和维护。
+    - 对于复杂的配置逻辑，Java配置提供了更强的表达能力和可读性。
+
+##### 灵活性和动态性
+- **注解**：
+    - 配置相对固定，难以实现复杂的动态配置逻辑。
+    - 适用于大多数常规配置场景。
+- **Java配置**：
+    - 可以使用Java的全部语言特性，实现更灵活、动态的配置。
+    - 适合需要复杂条件判断、动态创建bean等高级配置需求的场景。
+
+##### 扫描和注册方式
+- **注解**：
+    - 需要配置Spring容器扫描指定的包路径，以发现并注册带有注解的类为bean。
+    - 使用`<context:component-scan>`或`@ComponentScan`注解指定扫描路径。
+- **Java配置**：
+    - 不需要显式扫描，只需将配置类加载到Spring容器中即可。
+    - 可以通过`AnnotationConfigApplicationContext`或`@Import`注解等方式加载配置类。
+
+##### 适用场景
+- **注解**：
+    - 适用于中小型项目，配置相对简单，开发效率要求高的场景。
+    - 适合快速开发和原型验证。
+- **Java配置**：
+    - 适用于大型项目，配置复杂，需要高度灵活性和可维护性的场景。
+    - 适合团队协作和长期维护的项目。
+
+综上所述，基于注解和基于Java配置各有优势和适用场景。在实际开发中，可以根据项目需求和团队偏好选择合适的方式，或者结合使用这两种方式以达到最佳效果。
+
 
 #### Bean的作用域
 

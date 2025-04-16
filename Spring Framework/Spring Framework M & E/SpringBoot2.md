@@ -158,7 +158,7 @@ Spring Boot 2 在 Spring Boot 1 的基础上进行了全面的升级和改进，
 
 Spring Boot 使用 `SpringFactoriesLoader` 来加载 `META-INF/spring.factories` 文件中的自动配置类。这个文件包含了所有候选的自动配置类，Spring Boot 在启动时会扫描这些类，并根据条件决定是否应用这些配置。
 
-```plaintext
+```xml
 # Example of spring.factories
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.example.autoconfigure.MyAutoConfiguration,\
