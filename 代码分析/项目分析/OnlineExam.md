@@ -567,6 +567,7 @@ public class MessageController {
 
 
 # mapper
+
 ## Mybatis
 使用 MyBatis 和 MyBatis Plus 可以简化数据库操作，提高开发效率。下面详细介绍如何在 Spring Boot 项目中集成和使用这两个框架。
 
@@ -818,218 +819,709 @@ public interface UserMapper extends BaseMapper<User> {
 通过以上步骤，你可以在 Spring Boot 项目中成功集成和使用 MyBatis Plus。MyBatis Plus 提供了许多便捷的功能，如代码生成器、分页插件、条件构造器等，可以帮助开发者更高效地进行数据库操作。希望这个示例对你有所帮助！
 
 
-## AdminMapper.java
-你已经定义了一个 `AdminMapper` 接口，其中包含了基本的 CRUD 操作。为了确保这个接口能够正常工作，并且符合 MyBatis 和 MyBatis Plus 的最佳实践，我们可以进行一些调整和完善。以下是一些建议和完整的示例代码：
+## Mybatis的分页
+MyBatis 是一个优秀的持久层框架，它简化了数据库操作的复杂性。分页是数据库查询中常见的需求，特别是在处理大量数据时，分页可以显著提高用户体验和系统性能。MyBatis 提供了多种方式来实现分页功能，其中最常用的是使用 MyBatis Plus 插件。
 
-### 1. 确保实体类字段与数据库列名一致
+### MyBatis Plus 分页插件
 
-为了简化映射，建议实体类的字段名与数据库表的列名保持一致。如果需要不同的命名规则，可以使用注解来映射。
+MyBatis Plus 是 MyBatis 的增强工具，旨在简化开发、提高效率。它内置了一个强大的分页插件，可以非常方便地实现分页查询。
 
-#### Admin 实体类
+#### 主要特点
+
+1. **自动处理分页逻辑**:
+   - 自动计算 SQL 中的 `LIMIT` 和 `OFFSET` 参数。
+   - 支持多种数据库（如 MySQL、PostgreSQL、Oracle 等）的分页语法。
+
+2. **简洁的 API**:
+   - 使用简单的 Java 对象来表示分页信息。
+   - 通过注解或 XML 配置轻松启用分页功能。
+
+3. **高效的性能**:
+   - 减少不必要的查询次数，提高查询效率。
+   - 支持物理分页和逻辑分页。
+
+4. **易于集成**:
+   - 可以与 Spring Boot 等框架无缝集成。
+   - 支持自定义分页逻辑和扩展。
+
+#### 实现步骤
+
+1. **添加依赖**:
+   首先，在项目的 `pom.xml` 文件中添加 MyBatis Plus 的依赖：
+
+   ```xml
+   <dependency>
+       <groupId>com.baomidou</groupId>
+       <artifactId>mybatis-plus-boot-starter</artifactId>
+       <version>最新版本号</version>
+   </dependency>
+   ```
+
+2. **配置分页插件**:
+   在 Spring Boot 应用中配置 MyBatis Plus 的分页插件。通常在配置类中进行配置：
+
+   ```java
+   package com.exam.config;
+
+   import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+   import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+   import org.mybatis.spring.annotation.MapperScan;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+
+   @Configuration
+   @MapperScan("com.exam.mapper") // 扫描 Mapper 接口所在包
+   public class MyBatisPlusConfig {
+
+       @Bean
+       public MybatisPlusInterceptor mybatisPlusInterceptor() {
+           MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+           interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+           return interceptor;
+       }
+   }
+   ```
+
+3. **编写 Mapper 接口**:
+   在 Mapper 接口中使用 `IPage` 和 `Page` 类来进行分页查询。例如：
+
+   ```java
+   package com.exam.mapper;
+
+   import com.baomidou.mybatisplus.core.metadata.IPage;
+   import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+   import com.exam.vo.AnswerVO;
+   import org.apache.ibatis.annotations.Mapper;
+   import org.apache.ibatis.annotations.Select;
+
+   @Mapper
+   public interface AnswerMapper {
+
+       @Select("select question, subject, score, section, level, \"选择题\" as type from multi_question " +
+               "union select question, subject, score, section, level, \"判断题\" as type from judge_question " +
+               "union select question, subject, score, section, level, \"填空题\" as type from fill_question")
+       IPage<AnswerVO> findAll(Page page);
+   }
+   ```
+
+4. **使用 Mapper 进行分页查询**:
+   在 Service 层或 Controller 层中使用 Mapper 接口进行分页查询。例如：
+
+   ```java
+   package com.exam.service;
+
+   import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+   import com.exam.mapper.AnswerMapper;
+   import com.exam.vo.AnswerVO;
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.stereotype.Service;
+
+   @Service
+   public class AnswerService {
+
+       @Autowired
+       private AnswerMapper answerMapper;
+
+       public IPage<AnswerVO> getPaginatedAnswers(int currentPage, int pageSize) {
+           Page<AnswerVO> page = new Page<>(currentPage, pageSize);
+           return answerMapper.findAll(page);
+       }
+   }
+   ```
+
+5. **控制器示例**:
+   创建一个 Controller 来处理 HTTP 请求并返回分页后的题目信息。例如：
+
+   ```java
+   package com.exam.controller;
+
+   import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+   import com.exam.service.AnswerService;
+   import com.exam.vo.AnswerVO;
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.web.bind.annotation.GetMapping;
+   import org.springframework.web.bind.annotation.RequestParam;
+   import org.springframework.web.bind.annotation.RestController;
+
+   @RestController
+   public class AnswerController {
+
+       @Autowired
+       private AnswerService answerService;
+
+       @GetMapping("/answers")
+       public Page<AnswerVO> getAnswers(@RequestParam int page, @RequestParam int size) {
+           return answerService.getPaginatedAnswers(page, size);
+       }
+   }
+   ```
+
+### 示例代码解析
+
+#### 1. 添加依赖
+
+确保项目中包含了 MyBatis Plus 的依赖：
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter</artifactId>
+    <version>3.5.2</version> <!-- 请使用最新版本 -->
+</dependency>
+```
+
+#### 2. 配置分页插件
+
+在配置类中启用分页插件：
 
 ```java
-package com.exam.entity;
+package com.exam.config;
 
-import lombok.Data;
-import java.util.Date;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Data
-public class Admin {
-    private Integer adminId;   // 对应数据库中的 adminId
-    private String adminName;  // 对应数据库中的 adminName
-    private String sex;        // 对应数据库中的 sex
-    private String tel;        // 对应数据库中的 tel
-    private String email;      // 对应数据库中的 email
-    private String pwd;        // 对应数据库中的 pwd
-    private String cardId;     // 对应数据库中的 cardId
-    private String role;       // 对应数据库中的 role
+@Configuration
+@MapperScan("com.exam.mapper") // 扫描 Mapper 接口所在包
+public class MyBatisPlusConfig {
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        return interceptor;
+    }
 }
 ```
 
-### 2. 完善 Mapper 接口
+#### 3. 编写 Mapper 接口
 
-确保所有方法都有适当的注解，并且 SQL 语句正确无误。
+定义一个 Mapper 接口，并使用 `IPage` 和 `Page` 进行分页查询：
 
 ```java
 package com.exam.mapper;
 
-import com.exam.entity.Admin;
-import org.apache.ibatis.annotations.*;
-
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.exam.vo.AnswerVO;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface AdminMapper {
+public interface AnswerMapper {
 
-    @Select("SELECT adminId, adminName, sex, tel, email, pwd, cardId, role FROM admin")
-    public List<Admin> findAll();
-
-    @Select("SELECT adminId, adminName, sex, tel, email, pwd, cardId, role FROM admin WHERE adminId = #{adminId}")
-    public Admin findById(Integer adminId);
-
-    @Delete("DELETE FROM admin WHERE adminId = #{adminId}")
-    public int deleteById(int adminId);
-
-    @Update("UPDATE admin SET adminName = #{adminName}, sex = #{sex}, " +
-            "tel = #{tel}, email = #{email}, pwd = #{pwd}, cardId = #{cardId}, role = #{role} " +
-            "WHERE adminId = #{adminId}")
-    public int update(Admin admin);
-
-    @Options(useGeneratedKeys = true, keyProperty = "adminId")
-    @Insert("INSERT INTO admin(adminName, sex, tel, email, pwd, cardId, role) " +
-            "VALUES(#{adminName}, #{sex}, #{tel}, #{email}, #{pwd}, #{cardId}, #{role})")
-    public int add(Admin admin);
+    @Select("select question, subject, score, section, level, \"选择题\" as type from multi_question " +
+            "union select question, subject, score, section, level, \"判断题\" as type from judge_question " +
+            "union select question, subject, score, section, level, \"填空题\" as type from fill_question")
+    IPage<AnswerVO> findAll(Page page);
 }
 ```
 
-### 3. 配置扫描 Mapper 接口
+#### 4. 使用 Mapper 进行分页查询
 
-确保 Spring Boot 能够扫描到 `AdminMapper` 接口。可以在主类上使用 `@MapperScan` 注解，或者在配置文件中进行配置。
+在 Service 层中调用 Mapper 接口进行分页查询：
 
-#### 主类上的注解
 ```java
-package com.exam;
+package com.exam.service;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.exam.mapper.AnswerMapper;
+import com.exam.vo.AnswerVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@SpringBootApplication
-@MapperScan("com.exam.mapper")
-public class ExamApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ExamApplication.class, args);
+@Service
+public class AnswerService {
+
+    @Autowired
+    private AnswerMapper answerMapper;
+
+    public IPage<AnswerVO> getPaginatedAnswers(int currentPage, int pageSize) {
+        Page<AnswerVO> page = new Page<>(currentPage, pageSize);
+        return answerMapper.findAll(page);
     }
 }
 ```
 
-### 4. 创建 Service 层
+#### 5. 控制器示例
 
-创建一个服务层来处理业务逻辑。
-
-#### AdminService 接口
-```java
-package com.exam.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.exam.entity.Admin;
-
-public interface AdminService extends IService<Admin> {
-    // 可以在这里定义自定义的服务方法
-}
-```
-
-#### AdminServiceImpl 类
-```java
-package com.exam.service.impl;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.exam.entity.Admin;
-import com.exam.mapper.AdminMapper;
-import com.exam.service.AdminService;
-import org.springframework.stereotype.Service;
-
-@Service
-public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements AdminService {
-    // 可以在这里实现自定义的业务逻辑
-}
-```
-
-### 5. 创建 Controller
-
-最后，创建一个控制器来处理 HTTP 请求。
+创建一个 Controller 来处理 HTTP 请求并返回分页后的题目信息：
 
 ```java
 package com.exam.controller;
 
-import com.exam.entity.Admin;
-import com.exam.service.AdminService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.exam.service.AnswerService;
+import com.exam.vo.AnswerVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/admins")
-public class AdminController {
+public class AnswerController {
 
     @Autowired
-    private AdminService adminService;
+    private AnswerService answerService;
 
-    @PostMapping
-    public boolean createAdmin(@RequestBody Admin admin) {
-        return adminService.save(admin);
-    }
-
-    @GetMapping("/{adminId}")
-    public Admin getAdminById(@PathVariable Integer adminId) {
-        return adminService.getById(adminId);
-    }
-
-    @GetMapping
-    public List<Admin> getAllAdmins() {
-        return adminService.list();
-    }
-
-    @PutMapping("/{adminId}")
-    public boolean updateAdmin(@PathVariable Integer adminId, @RequestBody Admin admin) {
-        admin.setAdminId(adminId);
-        return adminService.updateById(admin);
-    }
-
-    @DeleteMapping("/{adminId}")
-    public boolean deleteAdmin(@PathVariable Integer adminId) {
-        return adminService.removeById(adminId);
+    @GetMapping("/answers")
+    public Page<AnswerVO> getAnswers(@RequestParam int page, @RequestParam int size) {
+        return answerService.getPaginatedAnswers(page, size);
     }
 }
 ```
 
-### 6. 数据库配置
+### 总结
 
-确保在 `application.yml` 或 `application.properties` 文件中配置了正确的数据库连接信息。
+MyBatis Plus 的分页插件提供了一种简单而高效的方式来实现分页功能。通过配置分页插件并在 Mapper 接口中使用 `IPage` 和 `Page` 类，可以轻松地实现复杂的分页查询。这种方式不仅减少了手动编写分页逻辑的工作量，还提高了代码的可维护性和性能。
 
-#### application.yml
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/your_database?useSSL=false&serverTimezone=UTC
-    username: your_username
-    password: your_password
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+## 什么时候使用List<>
+在Java中，`List<Admin>`通常用于存储和操作一组`Admin`对象。具体来说，在以下几种情况下会使用`List<Admin>`：
+
+1. **查询所有记录**:
+   当你需要从数据库中获取所有管理员的信息时，可以使用`List<Admin>`来存储这些信息。例如：
+   ```java
+   @Select("select adminName, sex, tel, email, cardId, role from admin")
+   public List<Admin> findAll();
+   ```
+   这个方法会返回一个包含所有管理员信息的列表。
+
+2. **批量处理数据**:
+   在某些业务场景中，你可能需要对多个管理员进行批量处理。例如，统计所有管理员的数量、筛选出特定条件的管理员等。使用`List<Admin>`可以方便地进行这些操作。
+   ```java
+   List<Admin> admins = adminMapper.findAll();
+   for (Admin admin : admins) {
+       // 对每个admin对象进行处理
+   }
+   ```
+
+3. **传递和返回多条记录**:
+   在服务层或控制器层，你可能会将查询到的多个管理员信息传递给其他层或返回给客户端。使用`List<Admin>`可以方便地进行这种传递和返回。
+   ```java
+   public List<Admin> getAllAdmins() {
+       return adminMapper.findAll();
+   }
+   ```
+
+4. **缓存数据**:
+   有时候为了提高性能，你会将一些频繁访问的数据缓存起来。使用`List<Admin>`可以方便地存储这些缓存数据。
+   ```java
+   private List<Admin> cachedAdmins;
+
+   public void loadAdmins() {
+       cachedAdmins = adminMapper.findAll();
+   }
+
+   public List<Admin> getCachedAdmins() {
+       return cachedAdmins;
+   }
+   ```
+
+5. **聚合和分析数据**:
+   在数据分析或报表生成的场景中，你可能需要对多条记录进行聚合和分析。使用`List<Admin>`可以方便地进行这些操作。
+   ```java
+   List<Admin> admins = adminMapper.findAll();
+   long numberOfAdmins = admins.stream().count();
+   ```
+
+总结来说，`List<Admin>`主要用于存储和操作一组`Admin`对象，特别是在需要处理多条记录的情况下。它提供了丰富的集合操作方法，使得数据的增删改查和业务逻辑处理变得更加方便。
+
+## 什么是值对象
+值对象（Value Object）是一种设计模式，常用于领域驱动设计（Domain-Driven Design, DDD）中。值对象的主要特点是其身份由其属性决定，而不是一个唯一的标识符。这意味着两个值对象只要它们的属性相同，就被认为是相等的。以下是对值对象的详细解释：
+
+### 主要特点
+
+1. **不可变性**:
+   - 值对象通常是不可变的（immutable），即一旦创建就不能修改其状态。
+   - 不可变性有助于确保对象的一致性和线程安全性。
+
+2. **无唯一标识符**:
+   - 值对象没有唯一的标识符（如主键），它们的身份完全由其属性决定。
+   - 例如，货币金额是一个典型的值对象，因为它是由数值和货币类型（如美元、欧元）组成的，而不需要一个唯一的ID。
+
+3. **相等性比较**:
+   - 值对象通过比较所有属性来判断是否相等。
+   - 例如，两个表示同一种货币金额的对象只有在数值和货币类型都相同时才被认为是相等的。
+
+4. **轻量级**:
+   - 值对象通常比实体对象（Entity）更轻量级，因为它们不需要持久化标识符或复杂的业务逻辑。
+   - 它们主要用于数据传输和封装简单的数据结构。
+
+5. **复用性**:
+   - 值对象可以在不同的上下文中复用，因为它们的行为和状态是独立的。
+   - 例如，同一个货币金额对象可以在多个订单中使用。
+
+### 示例
+
+假设我们正在开发一个考试管理系统，其中需要处理各种类型的题目信息。我们可以定义一个值对象 `AnswerVO` 来封装题目信息。
+
+#### 定义值对象 `AnswerVO`
+
+```java
+package com.exam.vo;
+
+public class AnswerVO {
+
+    private String question;
+    private String subject;
+    private Integer score;
+    private String section;
+    private String level;
+    private String type;
+
+    // 构造函数
+    public AnswerVO() {
+    }
+
+    public AnswerVO(String question, String subject, Integer score, String section, String level, String type) {
+        this.question = question;
+        this.subject = subject;
+        this.score = score;
+        this.section = section;
+        this.level = level;
+        this.type = type;
+    }
+
+    // Getter 和 Setter 方法
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    // equals 和 hashCode 方法
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnswerVO answerVO = (AnswerVO) o;
+        return question.equals(answerVO.question) &&
+                subject.equals(answerVO.subject) &&
+                score.equals(answerVO.score) &&
+                section.equals(answerVO.section) &&
+                level.equals(answerVO.level) &&
+                type.equals(answerVO.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(question, subject, score, section, level, type);
+    }
+
+    // toString 方法
+    @Override
+    public String toString() {
+        return "AnswerVO{" +
+                "question='" + question + '\'' +
+                ", subject='" + subject + '\'' +
+                ", score=" + score +
+                ", section='" + section + '\'' +
+                ", level='" + level + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
+}
 ```
+
+#### 解释
+
+1. **属性**:
+   - `question`: 题目内容。
+   - `subject`: 科目名称。
+   - `score`: 分数。
+   - `section`: 部分或章节。
+   - `level`: 难度级别。
+   - `type`: 题目类型（选择题、判断题、填空题等）。
+
+2. **构造函数**:
+   - 默认构造函数。
+   - 带参数的构造函数，方便初始化对象。
+
+3. **Getter 和 Setter 方法**:
+   - 提供对各个属性的访问和修改方法。
+
+4. **equals 和 hashCode 方法**:
+   - 重写这两个方法以确保根据属性值进行相等性比较。
+   - `equals` 方法比较所有属性是否相等。
+   - `hashCode` 方法生成基于属性的哈希码。
+
+5. **toString 方法**:
+   - 提供一个字符串表示形式，便于调试和日志记录。
+
+### 使用场景
+
+1. **数据传输对象 (DTO)**:
+   - 在不同层之间传递数据时使用值对象。
+   - 例如，在服务层和控制器层之间传递题目信息。
+
+2. **领域模型中的简单数据结构**:
+   - 封装一些简单的数据结构，如地址、货币金额等。
+   - 这些数据结构不需要唯一的标识符，只需根据属性值进行比较。
+
+3. **避免重复代码**:
+   - 通过定义值对象，可以减少重复的代码和数据结构。
+   - 例如，多个地方需要使用相同的题目信息时，可以共享同一个值对象。
+
+### 与实体对象的区别
+
+| 特征          | 值对象 (Value Object)                           | 实体对象 (Entity)                                       |
+|---------------|---------------------------------------------------|---------------------------------------------------------|
+| 标识符        | 没有唯一的标识符                                | 有唯一的标识符（如数据库中的主键）                      |
+| 相等性比较    | 根据属性值比较                                  | 根据唯一标识符比较                                      |
+| 生命周期      | 通常较短，随操作结束而销毁                      | 生命周期较长，可能在整个应用程序中存在                    |
+| 可变性        | 通常是不可变的                                  | 通常是可变的                                            |
+| 复用性        | 可以在不同的上下文中复用                        | 每个实例都是独立的，不能复用                            |
 
 ### 总结
 
-通过以上步骤，你可以在 Spring Boot 项目中成功集成和使用 MyBatis Plus，并定义了一个完整的 `AdminMapper` 接口来进行 CRUD 操作。以下是完整的代码结构：
+值对象是一种轻量级的数据结构，主要用于封装简单的数据，并且通过其属性值来确定相等性。它们在领域驱动设计中扮演着重要角色，帮助开发者更好地组织和管理数据。通过定义和使用值对象，可以提高代码的可维护性和复用性。
 
-#### 目录结构
+如果你有任何具体的问题或需要进一步的帮助，请随时提问！
+## AdminMapper.java
+这个代码片段是一个MyBatis的Mapper接口定义，用于对`admin`表进行基本的CRUD（创建、读取、更新、删除）操作。下面是对代码的详细解释：
+
+1. **包声明**:
+   ```java
+   package com.exam.mapper;
+   ```
+   这行代码指定了这个类所在的包路径为`com.exam.mapper`。
+
+2. **导入必要的类**:
+   ```java
+   import com.exam.entity.Admin;
+   import org.apache.ibatis.annotations.*;
+   import java.util.List;
+   ```
+   - `Admin`是自定义的一个实体类，表示管理员的信息。
+   - MyBatis的相关注解：`@Mapper`, `@Select`, `@Delete`, `@Update`, `@Insert`, `@Options`。
+   - `List`是Java集合框架中的一个接口，用于存储多个对象。
+
+3. **Mapper接口定义**:
+   ```java
+   @Mapper
+   public interface AdminMapper {
+       ...
+   }
+   ```
+   使用`@Mapper`注解标识这是一个MyBatis Mapper接口，这样MyBatis会在启动时自动扫描并注册这些接口。
+
+4. **方法定义及SQL查询**:
+
+   - **查询所有管理员信息**:
+     ```java
+     @Select("select adminName,sex,tel,email,cardId,role from admin")
+     public List<Admin> findAll();
+     ```
+     - `findAll`方法用于查询所有的管理员信息。
+     - `@Select`注解中的SQL语句从`admin`表中选择指定的字段，并将结果封装到`Admin`对象中。
+     - 返回的是一个包含所有管理员信息的`List<Admin>`对象。
+
+   - **根据ID查询管理员信息**:
+     ```java
+     @Select("select adminName,sex,tel,email,cardId,role from admin where adminId = #{adminId}")
+     public Admin findById(Integer adminId);
+     ```
+     - `findById`方法用于根据管理员ID查询具体的管理员信息。
+     - `@Select`注解中的SQL语句从`admin`表中选择指定的字段，并通过`where`子句过滤出特定ID的记录。
+     - 返回的是一个`Admin`对象，表示查询到的管理员信息。
+
+   - **根据ID删除管理员信息**:
+     ```java
+     @Delete("delete from admin where adminId = #{adminId}")
+     public int deleteById(int adminId);
+     ```
+     - `deleteById`方法用于根据管理员ID删除对应的记录。
+     - `@Delete`注解中的SQL语句通过`where`子句删除特定ID的记录。
+     - 返回的是受影响的行数（即删除的记录数量），类型为`int`。
+
+   - **更新管理员信息**:
+     ```java
+     @Update("update admin set adminName = #{adminName},sex = #{sex}," +
+             "tel = #{tel}, email = #{email},pwd = #{pwd},cardId = #{cardId},role = #{role} where adminId = #{adminId}")
+     public int update(Admin admin);
+     ```
+     - `update`方法用于更新管理员的信息。
+     - `@Update`注解中的SQL语句通过`set`子句设置新的字段值，并通过`where`子句过滤出特定ID的记录进行更新。
+     - 参数是一个`Admin`对象，包含了要更新的所有字段。
+     - 返回的是受影响的行数（即成功更新的数量），类型为`int`。
+
+   - **插入新管理员信息**:
+     ```java
+     @Options(useGeneratedKeys = true,keyProperty = "adminId")
+     @Insert("insert into admin(adminName,sex,tel,email,pwd,cardId,role) " +
+             "values(#{adminName},#{sex},#{tel},#{email},#{pwd},#{cardId},#{role})")
+     public int add(Admin admin);
+     ```
+     - `add`方法用于插入一个新的管理员记录。
+     - `@Insert`注解中的SQL语句插入一条新的记录到`admin`表中。
+     - `@Options`注解配置了使用数据库生成的主键，并将其赋值给传入的`Admin`对象的`adminId`属性。
+     - 参数是一个`Admin`对象，包含了要插入的所有字段。
+     - 返回的是受影响的行数（即插入的记录数量），类型为`int`。
+
+总结来说，这段代码的作用是提供了一系列的方法来操作`admin`表中的数据，包括查询所有管理员信息、根据ID查询单个管理员信息、根据ID删除管理员信息、更新管理员信息以及插入新的管理员信息。
+
+
+
+
+
+## AnswerMapper.java
+这个代码片段是一个MyBatis的Mapper接口定义，用于从数据库中查询不同类型的题目信息，并将结果封装到`AnswerVO`对象中。下面是对代码的详细解释：
+
+1. **包声明**:
+   ```java
+   package com.exam.mapper;
+   ```
+   这行代码指定了这个类所在的包路径为`com.exam.mapper`。
+
+2. **导入必要的类**:
+   ```java
+   import com.baomidou.mybatisplus.core.metadata.IPage;
+   import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+   import com.exam.vo.AnswerVO;
+   import org.apache.ibatis.annotations.Mapper;
+   import org.apache.ibatis.annotations.Select;
+   ```
+   - `IPage`和`Page`是MyBatis Plus提供的分页工具类。
+   - `AnswerVO`是自定义的一个值对象（Value Object），用于封装查询结果。
+   - `@Mapper`注解标识这是一个MyBatis Mapper接口。
+   - `@Select`注解用于指定SQL查询语句。
+
+3. **Mapper接口定义**:
+   ```java
+   @Mapper
+   public interface AnswerMapper {
+       ...
+   }
+   ```
+   使用`@Mapper`注解标识这是一个MyBatis Mapper接口，这样MyBatis会在启动时自动扫描并注册这些接口。
+
+4. **方法定义及SQL查询**:
+   ```java
+   @Select("select question, subject, score, section, level, \"选择题\" as type from multi_question " +
+           "union select question, subject, score, section, level, \"判断题\" as type from judge_question " +
+           "union select question, subject, score, section, level, \"填空题\" as type from fill_question")
+   IPage<AnswerVO> findAll(Page page);
+   ```
+   - `findAll`方法用于查询所有类型的题目信息，并进行分页。
+   - `@Select`注解中的SQL语句使用了`UNION`操作符来合并三个子查询的结果：
+     - 第一个子查询从`multi_question`表中选择数据，并将题目类型设置为“选择题”。
+     - 第二个子查询从`judge_question`表中选择数据，并将题目类型设置为“判断题”。
+     - 第三个子查询从`fill_question`表中选择数据，并将题目类型设置为“填空题”。
+   - 每个子查询都选择了相同的字段：`question`, `subject`, `score`, `section`, `level`，并在每个子查询中添加了一个额外的字段`type`来表示题目类型。
+   - 方法接收一个`Page`对象作为参数，该对象包含了分页信息（如当前页码、每页大小等）。
+   - 方法返回的是一个`IPage<AnswerVO>`对象，其中包含了分页后的查询结果以及相关的分页信息。
+
+总结来说，这段代码的作用是从多个不同的题目表中查询出题目信息，并通过`UNION`操作符将它们合并成一个结果集，最后将结果封装到`AnswerVO`对象中并通过分页的方式返回给调用者。具体功能如下：
+
+- **查询所有题目信息**:
+  - SQL语句通过`UNION`操作符合并了来自`multi_question`、`judge_question`和`fill_question`表的数据。
+  - 每个子查询都选择了相同的字段，并添加了一个额外的字段`type`来区分题目类型。
+  
+- **分页处理**:
+  - 方法接收一个`Page`对象作为参数，该对象包含了分页信息。
+  - 返回的是一个`IPage<AnswerVO>`对象，其中包含了分页后的查询结果以及相关的分页信息，便于前端展示分页数据。
+
+### 示例使用
+
+假设有一个`AnswerService`类，它使用`AnswerMapper`来获取题目信息并进行分页处理：
+
+```java
+package com.exam.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.exam.mapper.AnswerMapper;
+import com.exam.vo.AnswerVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AnswerService {
+
+    @Autowired
+    private AnswerMapper answerMapper;
+
+    public IPage<AnswerVO> getPaginatedAnswers(int currentPage, int pageSize) {
+        Page<AnswerVO> page = new Page<>(currentPage, pageSize);
+        return answerMapper.findAll(page);
+    }
+}
 ```
-src
-├── main
-│   ├── java
-│   │   └── com
-│   │       └── exam
-│   │           ├── ExamApplication.java
-│   │           ├── controller
-│   │           │   └── AdminController.java
-│   │           ├── entity
-│   │           │   └── Admin.java
-│   │           ├── mapper
-│   │           │   └── AdminMapper.java
-│   │           ├── service
-│   │           │   ├── AdminService.java
-│   │           │   └── impl
-│   │           │       └── AdminServiceImpl.java
-│   │           └── ExamApplication.java
-│   └── resources
-│       └── application.yml
+
+在这个示例中，`getPaginatedAnswers`方法接收当前页码和每页大小作为参数，并使用`AnswerMapper`的`findAll`方法获取分页后的题目信息。
+
+### 控制器示例
+
+假设有一个`AnswerController`类，它通过`AnswerService`来处理HTTP请求并返回分页后的题目信息：
+
+```java
+package com.exam.controller;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.exam.service.AnswerService;
+import com.exam.vo.AnswerVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class AnswerController {
+
+    @Autowired
+    private AnswerService answerService;
+
+    @GetMapping("/answers")
+    public Page<AnswerVO> getAnswers(@RequestParam int page, @RequestParam int size) {
+        return answerService.getPaginatedAnswers(page, size);
+    }
+}
 ```
 
-这样配置后，你的 `AdminMapper` 接口将能够正常工作，并且你可以通过 RESTful API 进行管理员的增删改查操作。希望这些信息对你有所帮助！
+在这个示例中，`getAnswers`方法通过HTTP GET请求接收当前页码和每页大小作为参数，并调用`AnswerService`的`getPaginatedAnswers`方法获取分页后的题目信息，然后将其返回给客户端。
 
-
-
+通过这种方式，你可以方便地实现对不同题目类型的查询和分页显示。
