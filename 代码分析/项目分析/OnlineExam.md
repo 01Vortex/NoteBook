@@ -1,5 +1,5 @@
 
-# entity
+# Entity
 ## Lombok
 Lombok 是一个非常有用的 Java 库，可以通过注解自动生成样板代码，从而减少冗余的代码编写工作。以下是 Lombok 提供的主要注解及其详细解释：
 
@@ -566,7 +566,7 @@ public class MessageController {
 
 
 
-# mapper
+# Mapper
 
 ## Mybatis
 使用 MyBatis 和 MyBatis Plus 可以简化数据库操作，提高开发效率。下面详细介绍如何在 Spring Boot 项目中集成和使用这两个框架。
@@ -1078,7 +1078,66 @@ public class AnswerController {
 MyBatis Plus 的分页插件提供了一种简单而高效的方式来实现分页功能。通过配置分页插件并在 Mapper 接口中使用 `IPage` 和 `Page` 类，可以轻松地实现复杂的分页查询。这种方式不仅减少了手动编写分页逻辑的工作量，还提高了代码的可维护性和性能。
 
 
-## 什么时候使用List<>
+
+## `IPage<AnswerVO>` 返回值有哪些
+在使用 MyBatis-Plus 进行分页查询时，`IPage<AnswerVO>` 返回值包含了分页查询的所有相关信息。具体来说，`IPage` 接口提供了以下属性和方法来获取分页结果：
+
+1. **总记录数 (`getTotal`)**: 数据库中满足条件的总记录数。
+2. **当前页的数据列表 (`getRecords`)**: 当前页的实际数据列表。
+3. **当前页码 (`getCurrent`)**: 当前请求的页码。
+4. **每页大小 (`getSize`)**: 每页显示的记录数。
+5. **总页数 (`getPages`)**: 总共有多少页。
+6. **是否有上一页 (`hasPrevious`)**: 是否有上一页。
+7. **是否有下一页 (`hasNext`)**: 是否有下一页。
+
+```java
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+@Service
+public class QuestionService extends ServiceImpl<QuestionMapper, MultiQuestion> {
+
+    public IPage<AnswerVO> findAll(int currentPage, int pageSize) {
+        Page<MultiQuestion> page = new Page<>(currentPage, pageSize);
+        QueryWrapper<MultiQuestion> queryWrapper = new QueryWrapper<>();
+        
+        // 构建你的查询条件
+        // queryWrapper.eq("subject", "某个科目");
+        
+        return baseMapper.findAll(page);
+    }
+
+    public void printPageInfo(IPage<AnswerVO> pageInfo) {
+        System.out.println("Total Records: " + pageInfo.getTotal());
+        System.out.println("Current Page: " + pageInfo.getCurrent());
+        System.out.println("Page Size: " + pageInfo.getSize());
+        System.out.println("Total Pages: " + pageInfo.getPages());
+        System.out.println("Has Previous: " + pageInfo.hasPrevious());
+        System.out.println("Has Next: " + pageInfo.hasNext());
+
+        for (AnswerVO answer : pageInfo.getRecords()) {
+            System.out.println("Question: " + answer.getQuestion());
+            System.out.println("Subject: " + answer.getSubject());
+            System.out.println("Score: " + answer.getScore());
+            System.out.println("Section: " + answer.getSection());
+            System.out.println("Level: " + answer.getLevel());
+            System.out.println("Type: " + answer.getType());
+            System.out.println("-----------------------------");
+        }
+    }
+}
+
+
+
+
+```
+
+
+
+
+## 什么时候使用`List<Admin>`
 在Java中，`List<Admin>`通常用于存储和操作一组`Admin`对象。具体来说，在以下几种情况下会使用`List<Admin>`：
 
 1. **查询所有记录**:
@@ -1322,6 +1381,93 @@ public class AnswerVO {
 值对象是一种轻量级的数据结构，主要用于封装简单的数据，并且通过其属性值来确定相等性。它们在领域驱动设计中扮演着重要角色，帮助开发者更好地组织和管理数据。通过定义和使用值对象，可以提高代码的可维护性和复用性。
 
 如果你有任何具体的问题或需要进一步的帮助，请随时提问！
+
+## 哪种情况下使用mybatis的分页功能
+MyBatis的分页功能在需要从数据库中检索大量数据，但又不需要一次性加载所有数据到内存中的情况下非常有用。具体来说，以下情况适合使用MyBatis的分页功能：
+
+1. **大数据集查询**：当查询结果的数据量很大时，为了提高性能和用户体验，通常会采用分页的方式，每次只返回一部分数据。
+2. **Web应用中的列表展示**：在许多Web应用程序中，比如博客文章列表、商品列表等，通常会在前端展示一个分页器，用户可以通过点击不同页码来查看不同的数据子集。
+3. **后台管理系统**：在企业级应用或后台管理系统的数据展示页面中，也经常使用分页技术来处理大量的业务数据。
+4. **API接口设计**：在构建RESTful API时，如果某个GET请求可能返回大量数据，那么可以使用分页机制来限制每个请求返回的数据量。
+
+### 如何在MyBatis中实现分页？
+
+MyBatis提供了多种方式来实现分页查询，其中最常用的是通过SQL语句的手动编写和插件的方式来实现。以下是两种常见的方法：
+
+#### 方法一：手动编写SQL语句
+
+这种方式适用于简单的场景，你可以在Mapper.xml文件中直接写带有LIMIT和OFFSET关键字的SQL语句（以MySQL为例）：
+
+```xml
+<select id="selectUsersByPage" parameterType="map" resultType="User">
+    SELECT * FROM users
+    LIMIT #{offset}, #{limit}
+</select>
+```
+
+然后，在Java代码中调用这个Mapper方法并传入参数`offset`和`limit`即可。
+
+#### 方法二：使用MyBatis分页插件
+
+对于更复杂的分页需求或者想要简化开发过程，推荐使用MyBatis提供的分页插件，如PageHelper。首先需要引入依赖，然后配置拦截器，并在Mapper层使用Page对象来接收分页结果。
+
+**引入依赖**
+
+如果你使用Maven项目，则在pom.xml添加如下依赖：
+
+```xml
+<dependency>
+    <groupId>com.github.pagehelper</groupId>
+    <artifactId>pagehelper</artifactId>
+    <version>最新版本号</version>
+</dependency>
+```
+
+**配置拦截器**
+
+在Spring Boot项目中，可以在配置类中注册PageInterceptor bean：
+
+```java
+@Configuration
+public class MyBatisConfig {
+
+    @Bean
+    public PageInterceptor pageInterceptor() {
+        PageInterceptor interceptor = new PageInterceptor();
+        Properties properties = new Properties();
+        // 配置合理化参数，默认值false
+        properties.setProperty("reasonable", "true");
+        interceptor.setProperties(properties);
+        return interceptor;
+    }
+}
+```
+
+**Mapper层使用**
+
+在Mapper方法上无需做特殊处理，只需要在Service层调用前先设置分页参数：
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Override
+    public PageInfo<User> getUsers(int pageNum, int pageSize) {
+        // 设置分页参数
+        PageHelper.startPage(pageNum, pageSize);
+        List<User> userList = userMapper.selectAllUsers();  // 假设selectAllUsers是一个普通的查询所有用户的Mapper方法
+        // 将List封装进PageInfo对象中，该对象包含了分页信息和查询结果
+        return new PageInfo<>(userList);
+    }
+}
+```
+
+以上就是在MyBatis中实现分页查询的一些常见做法。根据实际项目的复杂度和技术栈选择合适的方法来实现高效的分页功能。
+
+
 ## AdminMapper.java
 这个代码片段是一个MyBatis的Mapper接口定义，用于对`admin`表进行基本的CRUD（创建、读取、更新、删除）操作。下面是对代码的详细解释：
 
@@ -1426,7 +1572,7 @@ public class AnswerVO {
    import org.apache.ibatis.annotations.Mapper;
    import org.apache.ibatis.annotations.Select;
    ```
-   - `IPage`和`Page`是MyBatis Plus提供的分页工具类。
+   - `IPage`和`Page`是MyBatis Plus提供的分页工具类(自带一些构造函数或者方法)。
    - `AnswerVO`是自定义的一个值对象（Value Object），用于封装查询结果。
    - `@Mapper`注解标识这是一个MyBatis Mapper接口。
    - `@Select`注解用于指定SQL查询语句。
@@ -1525,3 +1671,75 @@ public class AnswerController {
 在这个示例中，`getAnswers`方法通过HTTP GET请求接收当前页码和每页大小作为参数，并调用`AnswerService`的`getPaginatedAnswers`方法获取分页后的题目信息，然后将其返回给客户端。
 
 通过这种方式，你可以方便地实现对不同题目类型的查询和分页显示。
+
+
+
+## LoginMapper.java
+这个Java接口 `LoginMapper` 是一个MyBatis的Mapper接口，用于定义与数据库交互的SQL映射方法。具体来说，它包含了三个登录验证的方法，分别对应管理员（Admin）、教师（Teacher）和学生（Student）三种不同的用户类型。下面是对该接口及其方法的详细解释：
+
+### 接口声明
+
+```java
+@Mapper
+public interface LoginMapper {
+```
+
+- `@Mapper`: 这是一个注解，用于标识这是一个MyBatis的Mapper接口。在Spring Boot项目中，通常不需要手动为每个Mapper接口添加此注解，因为可以通过配置全局扫描来识别所有的Mapper接口。
+- `LoginMapper`: 定义了一个名为`LoginMapper`的接口，该接口包含了一系列用于执行数据库操作的方法。
+
+### 方法详解
+
+#### 1. 管理员登录验证
+
+```java
+@Select("select adminId,adminName,sex,tel,email,cardId,role from admin where adminId = #{username} and pwd = #{password}")
+public Admin adminLogin(Integer username, String password);
+```
+
+- `@Select`: 这是一个MyBatis注解，用于指定一个SQL查询语句。在这个例子中，它是用来从`admin`表中选择特定条件下的记录。
+- `"select adminId,adminName,sex,tel,email,cardId,role from admin where adminId = #{username} and pwd = #{password}"`: SQL查询语句，其中`#{username}`和`#{password}`是占位符，会被传入的实际参数值替换。
+- `public Admin adminLogin(Integer username, String password)`: 定义了一个公共方法`adminLogin`，接受两个参数——`username`（管理员ID）和`password`（密码），并返回一个`Admin`对象。如果查询结果存在，则返回对应的`Admin`对象；否则，可能返回`null`。
+
+#### 2. 教师登录验证
+
+```java
+@Select("select teacherId,teacherName,institute,sex,tel,email,cardId,type,role from teacher where teacherId = #{username} and pwd = #{password}")
+public Teacher teacherLogin(Integer username, String password);
+```
+
+- 类似于`adminLogin`方法，但是这次是从`teacher`表中进行查询，并且选择了不同的字段。
+- 返回的是一个`Teacher`对象，表示匹配到的教师信息。
+
+#### 3. 学生登录验证
+
+```java
+@Select("select studentId,studentName,grade,major,clazz,institute,tel,email,cardId,sex,role from student where studentId = #{username} and pwd = #{password}")
+public Student studentLogin(Integer username, String password);
+```
+
+- 同样地，这个方法用于从`student`表中查找符合条件的学生记录。
+- 返回的是一个`Student`对象，代表找到的学生信息。
+
+### 实体类说明
+
+为了使上述方法正常工作，你需要有对应的实体类`Admin`、`Teacher`和`Student`。这些实体类应该具有与SQL查询语句中所选列相对应的属性和相应的getter/setter方法。例如，`Admin`类可能看起来像这样：
+
+```java
+public class Admin {
+    private Integer adminId;
+    private String adminName;
+    private String sex;
+    private String tel;
+    private String email;
+    private String cardId;
+    private String role;
+
+    // Getters and Setters...
+}
+```
+
+同样的结构适用于`Teacher`和`Student`类，只是属性名会有所不同。
+
+### 总结
+
+`LoginMapper`接口通过使用MyBatis的注解功能，简化了与数据库的交互过程。每个方法都对应一个具体的SQL查询操作，可以根据传入的用户名和密码从不同类型的用户表中获取相应的用户信息。这种设计模式有助于提高代码的可读性和维护性。

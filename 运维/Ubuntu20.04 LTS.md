@@ -98,12 +98,12 @@ CREATE DATABASE multilingual_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 
 
 # 端口
-- 22334 ssh
-- 2022  blog
-- 2023 main
-- 2077 nav
-- 2076 bt
-- 2075 普罗米修斯
+- 2000 ssh
+- 2001 bt面板
+- 2002 lib存储库
+- 2003 redis
+- 2077 blog
+- 2076 nav
 
 
 
