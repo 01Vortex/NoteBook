@@ -1188,6 +1188,86 @@ public class QuestionService extends ServiceImpl<QuestionMapper, MultiQuestion> 
 
 总结来说，`List<Admin>`主要用于存储和操作一组`Admin`对象，特别是在需要处理多条记录的情况下。它提供了丰富的集合操作方法，使得数据的增删改查和业务逻辑处理变得更加方便。
 
+## 方法签名冲突
+### 1. 方法重载时的签名冲突
+
+- **相同方法名，相同参数类型**：
+  - **场景**：在同一个类中定义两个方法，方法名相同，参数类型、数量和顺序也相同，仅返回类型不同。
+  - **示例**：
+    ```java
+    public class MyClass {
+        public int myMethod(int a) { ... }
+        public String myMethod(int a) { ... } // 编译错误：方法签名冲突
+    }
+    ```
+  - **原因**：尽管返回类型不同，但Java的方法签名仅由方法名和参数类型组成，因此被视为重复方法。
+
+### 2. 泛型擦除导致的签名冲突
+
+- **泛型参数类型在运行时被擦除**：
+  - **场景**：使用泛型参数定义方法，由于泛型擦除机制，不同泛型类型的方法在运行时具有相同的签名。
+  - **示例**：
+    ```java
+    public class MyClass {
+        public void process(List<String> list) { ... }
+        public void process(List<Integer> list) { ... } // 编译错误：方法签名冲突
+    }
+    ```
+  - **原因**：在运行时，`List<String>`和`List<Integer>`都被擦除为`List`，导致方法签名相同。
+
+### 3. 接口默认方法冲突
+
+- **实现多个接口，接口中有相同签名的默认方法**：
+  - **场景**：一个类实现了多个接口，这些接口中包含相同签名的默认方法。
+  - **示例**：
+    ```java
+    interface InterfaceA {
+        default void commonMethod() { ... }
+    }
+
+    interface InterfaceB {
+        default void commonMethod() { ... }
+    }
+
+    public class MyClass implements InterfaceA, InterfaceB {
+        // 编译错误：方法commonMethod()冲突
+    }
+    ```
+  - **原因**：类`MyClass`继承了两个相同签名的默认方法，编译器无法确定使用哪个方法。
+
+### 4. 继承时方法签名不一致的重写
+
+- **子类方法签名与父类方法不匹配**：
+  - **场景**：子类试图重写父类方法，但方法签名（参数类型、数量或顺序）不一致。
+  - **示例**：
+    ```java
+    class Parent {
+        public void doSomething(int a) { ... }
+    }
+
+    class Child extends Parent {
+        public void doSomething(String a) { ... } // 编译错误：方法签名不匹配
+    }
+    ```
+  - **原因**：子类方法`doSomething(String)`与父类方法`doSomething(int)`签名不同，无法构成重写，导致冲突。
+
+### 5. 可变参数方法导致的歧义
+
+- **可变参数与固定参数的重载方法调用不明确**：
+  - **场景**：方法重载时，可变参数方法与其他参数方法可能导致调用歧义。
+  - **示例**：
+    ```java
+    public class MyClass {
+        public void myMethod(int a, String... args) { ... }
+        public void myMethod(int a, String b) { ... }
+
+        public static void main(String[] args) {
+            MyClass obj = new MyClass();
+            obj.myMethod(1, "hello"); // 编译错误：方法调用不明确
+        }
+    }
+    ```
+  - **原因**：编译器无法确定应该调用哪个方法，因为参数`"hello"`既可以视为可变参数的一部分，也可以视为固定参数
 ## 什么是值对象
 值对象（Value Object）是一种设计模式，常用于领域驱动设计（Domain-Driven Design, DDD）中。值对象的主要特点是其身份由其属性决定，而不是一个唯一的标识符。这意味着两个值对象只要它们的属性相同，就被认为是相等的。以下是对值对象的详细解释：
 
@@ -1468,6 +1548,69 @@ public class UserServiceImpl implements UserService {
 以上就是在MyBatis中实现分页查询的一些常见做法。根据实际项目的复杂度和技术栈选择合适的方法来实现高效的分页功能。
 
 
+## sql语句对应的函数返回类型有哪些
+SQL语句对应的函数返回类型取决于执行的操作和预期的结果。常见的返回类型包括：
+
+#### 查询语句（SELECT）
+
+- **单一值**
+  - **类型**：基本数据类型（如`int`、`float`、`string`等）或其包装类。
+  - **示例**：`SELECT COUNT(*) FROM table;`返回整数类型的记录数。
+- **单行结果**
+  - **类型**：自定义对象或结构体。
+  - **示例**：`SELECT id, name, age FROM users WHERE id = 1;`返回一个包含`id`、`name`和`age`属性的用户对象。
+- **多行结果**
+  - **类型**：集合类型，如`List`、`Set`等，元素为自定义对象或结构体。
+  - **示例**：`SELECT * FROM users;`返回一个用户对象的列表。
+- **键值对**
+  - **类型**：`Map`类型，键和值可以是任意类型。
+  - **示例**：`SELECT name, email FROM users;`返回一个以`name`为键、`email`为值的`Map`。
+
+#### 插入语句（INSERT）
+
+- **类型**：整数类型。
+- **返回值**：受影响的行数，通常为插入的记录数。
+- **示例**：`INSERT INTO users (name, age) VALUES ('Alice', 25);`返回值为1。
+
+#### 更新语句（UPDATE）
+
+- **类型**：整数类型。
+- **返回值**：受影响的行数，即更新的记录数。
+- **示例**：`UPDATE users SET age = 30 WHERE id = 1;`返回值为1。
+
+#### 删除语句（DELETE）
+
+- **类型**：整数类型。
+- **返回值**：受影响的行数，即删除的记录数。
+- **示例**：`DELETE FROM users WHERE id = 1;`返回值为1。
+
+#### 聚合函数
+
+- **类型**：取决于聚合函数的结果类型。
+- **示例**：
+  - `AVG(salary)`返回浮点型的平均工资。
+  - `SUM(quantity)`返回整数或浮点型的总数量，取决于`quantity`列的数据类型。
+
+#### 标量函数
+
+- **类型**：与输入参数类型相关或特定的单一值类型。
+- **示例**：
+  - `UPPER(name)`返回字符串类型的大写名称。
+  - `ROUND(price, 2)`返回浮点型的四舍五入后的价格。
+
+#### 特殊函数
+
+- **类型**：特定类型，如日期、时间戳等。
+- **示例**：
+  - `NOW()`返回当前日期和时间。
+  - `DATEDIFF(day, start_date, end_date)`返回两个日期之间的天数差。
+
+#### 自定义函数
+
+- **类型**：由用户定义，可以是任意合法的数据类型。
+- **示例**：自定义函数`GET_EMPLOYEE_COUNT(dept_id)`可能返回整数类型的部门员工数。
+
+**总结**：SQL语句的返回类型取决于所执行的操作和预期结果的数据类型。在编写代码时，应根据SQL语句的实际返回类型选择合适的函数返回类型，以确保数据能够正确映射和处理。
 ## AdminMapper.java
 这个代码片段是一个MyBatis的Mapper接口定义，用于对`admin`表进行基本的CRUD（创建、读取、更新、删除）操作。下面是对代码的详细解释：
 
@@ -1491,7 +1634,6 @@ public class UserServiceImpl implements UserService {
    ```java
    @Mapper
    public interface AdminMapper {
-       ...
    }
    ```
    使用`@Mapper`注解标识这是一个MyBatis Mapper接口，这样MyBatis会在启动时自动扫描并注册这些接口。
@@ -1682,6 +1824,7 @@ public class AnswerController {
 ```java
 @Mapper
 public interface LoginMapper {
+}
 ```
 
 - `@Mapper`: 这是一个注解，用于标识这是一个MyBatis的Mapper接口。在Spring Boot项目中，通常不需要手动为每个Mapper接口添加此注解，因为可以通过配置全局扫描来识别所有的Mapper接口。
