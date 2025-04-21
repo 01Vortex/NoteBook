@@ -566,6 +566,165 @@ public class MessageController {
 
 
 
+# Dao
+## dao实例
+以下是一个基于Java和MyBatis框架的DAO层实例，包含数据模型、Mapper XML、DAO接口和实现类。
+
+#### 数据模型（User.java）
+
+```java
+public class User {
+    private int id;
+    private String username;
+    private int age;
+
+    // 构造方法、getter和setter方法
+    // ...
+}
+```
+
+#### Mapper XML（UserMapper.xml）
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.UserDao">
+
+    <select id="getUserById" resultType="User" parameterType="int">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        INSERT INTO user (username, age) VALUES (#{username}, #{age})
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        UPDATE user SET username = #{username}, age = #{age} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="int">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+</mapper>
+```
+
+#### DAO接口（UserDao.java）
+
+```java
+public interface UserDao {
+    User getUserById(int id);
+    void addUser(User user);
+    void updateUser(User user);
+    void deleteUserById(int id);
+}
+```
+
+#### DAO实现类（UserDaoImpl.java）
+
+```java
+public class UserDaoImpl implements UserDao {
+    private SqlSessionFactory sqlSessionFactory;
+
+    public UserDaoImpl(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
+    }
+
+    @Override
+    public User getUserById(int id) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            return sqlSession.selectOne("com.example.dao.UserDao.getUserById", id);
+        }
+    }
+
+    @Override
+    public void addUser(User user) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.insert("com.example.dao.UserDao.addUser", user);
+            sqlSession.commit();
+        }
+    }
+
+    @Override
+    public void updateUser(User user) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.update("com.example.dao.UserDao.updateUser", user);
+            sqlSession.commit();
+        }
+    }
+
+    @Override
+    public void deleteUserById(int id) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.delete("com.example.dao.UserDao.deleteUserById", id);
+            sqlSession.commit();
+        }
+    }
+}
+```
+
+#### 配置MyBatis（mybatis-config.xml）
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis_demo"/>
+                <property name="username" value="root"/>
+                <property name="password" value="password"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="com/example/dao/UserMapper.xml"/>
+    </mappers>
+</configuration>
+```
+
+#### 使用DAO
+
+```java
+public class UserService {
+    private UserDao userDao; //空壳,用来存注入的依赖或类型相同的对象new userDao();
+
+    public UserService(UserDao userDao) {
+        this.userDao = userDao; //userDao空壳获得对象,可以调用子类方法了
+    }
+
+    public User getUserById(int id) {
+        return userDao.getUserById(id);
+    }
+
+    public void addUser(User user) {
+        userDao.addUser(user);
+    }
+
+    public void updateUser(User user) {
+        userDao.updateUser(user);
+    }
+
+    public void deleteUserById(int id) {
+        userDao.deleteUserById(id);
+    }
+
+    // ...
+}
+```
+
+#### 说明
+
+- **数据模型**：`User`类表示用户数据，包含`id`、`username`和`age`属性。
+- **Mapper XML**：`UserMapper.xml`定义了与数据库交互的SQL语句，通过`namespace`与`UserDao`接口关联。
+- **DAO接口**：`UserDao`定义了用户数据访问的方法。
+- **DAO实现类**：`UserDaoImpl`使用`SqlSessionFactory`创建`SqlSession`，调用Mapper中的SQL语句实现数据访问。
+- **MyBatis配置**：`mybatis-config.xml`配置数据源和Mapper XML的位置。
+- **使用DAO**：`UserService`类通过依赖注入使用`UserDao`实现业务逻辑。
+
 # Mapper
 
 ## Mybatis
@@ -1886,3 +2045,58 @@ public class Admin {
 ### 总结
 
 `LoginMapper`接口通过使用MyBatis的注解功能，简化了与数据库的交互过程。每个方法都对应一个具体的SQL查询操作，可以根据传入的用户名和密码从不同类型的用户表中获取相应的用户信息。这种设计模式有助于提高代码的可读性和维护性。
+
+
+
+
+# Controller
+## 不建议使用字段注入
+1. 简要解释报错原因
+字段注入（@Autowired直接作用于字段）不被推荐，因为它降低了代码的可测试性和灵活性。构造器注入或Setter注入更符合依赖注入的最佳实践。
+ 
+ 2. 提供修复建议
+将@Autowired注解放到构造函数上，使用构造器注入替代字段注入。这样可以确保依赖在对象创建时就被正确注入，同时便于单元测试。
+
+```java
+private final LoginServiceImpl loginService;  
+
+//构造函数初始化空壳loginService
+@Autowired  
+public  LoginController(LoginServiceImpl loginService){  
+    this.loginService = loginService;  
+}
+```
+
+3. 通过构造器注入，LoginServiceImpl在LoginController实例化时被强制注入，避免了字段注入可能带来的问题（如延迟加载或空指针异常）。此外，这种方式更符合Spring框架的推荐实践，增强了代码的可维护性和可测试性。
+
+
+## 构造函数
+构造函数是一种特殊的方法，在创建对象时自动调用，主要用于初始化对象的状态。它的主要作用包括：
+
+#### 初始化成员变量
+- **赋初值**：为对象的成员变量设置初始值，确保对象在创建后具有合理的默认状态，避免使用未初始化的数据。
+- **参数传递**：通过构造函数的参数，可以根据外部传入的值定制对象的初始状态。
+
+#### 分配内存空间
+- **内存分配**：在创建对象时，构造函数负责为对象在内存中分配所需的空间，确保对象有足够的内存存储其数据。
+
+#### 执行必要的初始化操作
+- **资源获取**：执行对象创建所需的必要操作，如打开文件、建立数据库连接、申请系统资源等。
+- **状态设置**：进行复杂的初始化逻辑，确保对象在创建后处于可用的状态。
+
+#### 实现构造函数的重载
+- **多种初始化方式**：一个类可以定义多个构造函数，参数个数或类型不同，称为构造函数的重载。这提供了灵活的创建对象的方式，满足不同的初始化需求。
+
+#### 确保数据的安全性和完整性
+- **数据验证**：在构造函数中对传入的参数进行验证，确保数据的合法性和一致性，防止对象处于无效状态。
+- **封装性**：通过构造函数，可以将对象的初始化细节封装起来，外部只能通过构造函数创建对象，增强了类的封装性。
+
+#### 支持特殊的设计模式
+- **单例模式**：通过将构造函数声明为私有，可以控制对象的创建，实现单例模式，确保类只有一个实例。
+- **工厂模式**：在工厂方法中调用相应的构造函数，创建对象，隐藏对象的创建细节，提供更灵活的创建机制。
+
+#### 提高代码的可读性和可维护性
+- **集中初始化**：将对象的初始化逻辑集中在构造函数中，使代码更加清晰，避免在多处进行初始化操作。
+- **减少错误**：自动初始化对象，减少了因忘记初始化而导致的错误，提高了代码的可靠性。
+
+总之，构造函数在面向对象编程中起着关键作用，它确保对象在创建时处于正确的初始状态，为后续的操作提供了可靠的基础，提高了代码的安全性、灵活性和可维护性。
