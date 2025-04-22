@@ -7,8 +7,10 @@
 ## 🚀 动态统计  
 <!-- GitHub统计卡片 -->
 ![GitHub Stats](https://github-readme-stats.vercel.app/api?username=01Vortex&show_icons=true&theme=light&hide_title=true&hide=prs,issues)  
+
+---
+
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=01Vortex&layout=compact&theme=light)  
-![Wakatime](https://wakatime.com/badge/user/YOUR_WAKATIME_ID.svg)  
 
 ---
 ## 📂 分类目录
@@ -51,25 +53,15 @@
 ---
 
 ## 🛠️ 技术栈图标集
-![Linux](https://img.shields.io/badge/-Linux-FCC624?logo=linux&logoColor=black)
-![Spring](https://img.shields.io/badge/-Spring-6DB33F?logo=spring&logoColor=white)
-![Android](https://img.shields.io/badge/-Android-3DDC84?logo=android&logoColor=white)
-![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black)
-![MySQL](https://img.shields.io/badge/-MySQL-4479A1?logo=mysql&logoColor=white)
+
+![Linux](https://img.shields.io/badge/-Linux-FCC624?logo=linux&logoColor=black)  ![Spring](https://img.shields.io/badge/-Spring-6DB33F?logo=spring&logoColor=white)  ![Android](https://img.shields.io/badge/-Android-3DDC84?logo=android&logoColor=white)  ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black)  ![MySQL](https://img.shields.io/badge/-MySQL-4479A1?logo=mysql&logoColor=white)
+
 
 ---
-
-## 📌 特色
-- 🔄 代码片段与理论结合
-- 🚀 附可复现的Demo项目
-- ❗ 常见踩坑解决方案
-- 📅 按技术演进版本归档
 
 
 ## 🌟   
 <!-- 访客计数 -->  
-![Visitor Count](https://visitor-badge.glitch.me/badge?page_id=YOUR_USERNAME.YOUR_REPO_NAME)  
+![Visitor Count](https://visitor-badge.glitch.me/badge?page_id=01Vortex)  
 <!-- 连续提交记录 -->  
 ![GitHub Streak](https://streak-stats.demolab.com/?user=01Vortex&theme=dark)  
-<!-- 项目许可证 -->  
-![License](https://img.shields.io/github/license/01Vortex/YOUR_REPO_NAME)
