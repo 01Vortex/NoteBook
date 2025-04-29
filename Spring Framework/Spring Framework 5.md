@@ -961,6 +961,8 @@ Spring 支持以下几种自动装配类型：
 ## [[Spring Cloud]]
 ## [[Spring AOP]]
 ## [[Spring MVC]]
+
+## [[Spring Framework/Spring Framework M & E/Spring Security|Spring Security]]
 # 数据访问
 ## Spring 如何支持数据访问？有哪些模块？
 
