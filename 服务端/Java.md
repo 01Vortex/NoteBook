@@ -1653,6 +1653,278 @@ public class ArrayFillExample {
 
 
 
+# 数据结构
+## 集合框架（Collection Framework）
+Java 集合框架提供了丰富的接口和类来存储和操作一组对象。下面通过一些具体的实例展示如何使用 Java 集合框架中的几种常见集合类型：`List`, `Set`, `Queue`, 和 `Map`。
+
+### 1. 使用 List
+
+`List` 接口的实现类（如 `ArrayList`, `LinkedList`）允许你存储有序的元素集合，并且可以包含重复值。
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListExample {
+    public static void main(String[] args) {
+        // 创建一个ArrayList实例
+        List<String> list = new ArrayList<>();
+
+        // 添加元素
+        list.add("Apple");
+        list.add("Banana");
+        list.add("Orange");
+
+        // 打印列表
+        System.out.println(list);
+
+        // 访问特定索引处的元素
+        System.out.println("First item: " + list.get(0));
+
+        // 删除元素
+        list.remove("Banana");
+
+        // 遍历列表
+        for (String fruit : list) {
+            System.out.println(fruit);
+        }
+    }
+}
+```
+
+### 2. 使用 Set
+
+`Set` 接口的实现类（如 `HashSet`, `LinkedHashSet`, `TreeSet`）不允许存储重复元素，适合用于确保唯一性。
+
+```java
+import java.util.HashSet;
+import java.util.Set;
+
+public class SetExample {
+    public static void main(String[] args) {
+        // 创建一个HashSet实例
+        Set<String> set = new HashSet<>();
+
+        // 添加元素
+        set.add("Dog");
+        set.add("Cat");
+        set.add("Dog"); // 重复添加不会影响结果
+
+        // 打印集合
+        System.out.println(set);
+
+        // 检查是否包含某个元素
+        if (set.contains("Cat")) {
+            System.out.println("Contains Cat");
+        }
+
+        // 遍历集合
+        for (String animal : set) {
+            System.out.println(animal);
+        }
+    }
+}
+```
+
+### 3. 使用 Queue
+
+`Queue` 接口的实现类（如 `PriorityQueue`, `Deque` 的实现类 `ArrayDeque` 或 `LinkedList`）通常用于实现队列数据结构，遵循先进先出（FIFO）原则。
+
+```java
+import java.util.PriorityQueue;
+
+public class QueueExample {
+    public static void main(String[] args) {
+        // 创建一个优先级队列实例
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+
+        // 添加元素
+        queue.add(10);
+        queue.add(5);
+        queue.add(15);
+
+        // 获取并移除队首元素
+        System.out.println("Removed element: " + queue.poll());
+
+        // 查看队首元素但不移除它
+        System.out.println("Head of the queue: " + queue.peek());
+
+        // 遍历队列
+        while (!queue.isEmpty()) {
+            System.out.println(queue.poll());
+        }
+    }
+}
+```
+
+### 4. 使用 Map
+
+`Map` 接口的实现类（如 `HashMap`, `LinkedHashMap`, `TreeMap`）用于存储键值对，其中每个键都是唯一的。
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapExample {
+    public static void main(String[] args) {
+        // 创建一个HashMap实例
+        Map<String, Integer> map = new HashMap<>();
+
+        // 添加键值对
+        map.put("Alice", 23);
+        map.put("Bob", 27);
+        map.put("Charlie", 21);
+
+        // 获取特定键对应的值
+        System.out.println("Age of Bob: " + map.get("Bob"));
+
+        // 检查是否存在某个键
+        if (map.containsKey("Alice")) {
+            System.out.println("Contains Alice");
+        }
+
+        // 遍历Map
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
+```
+
+这些例子展示了如何在Java中使用不同的集合类型。根据你的具体需求选择合适的集合类型可以极大地简化代码编写，并提高程序的性能。每种集合类型都有其适用场景，理解它们的特点有助于做出最佳选择。
+## 映射（Map）
+在Java中，映射（Map）是一种用于存储键值对的数据结构，其中每个键都是唯一的。Java 提供了多种 `Map` 接口的实现类，如 `HashMap`, `LinkedHashMap`, `TreeMap`, 和 `ConcurrentHashMap` 等。下面通过几个具体的实例来展示如何使用这些映射类型。
+
+### 1. 使用 HashMap
+
+`HashMap` 是基于哈希表实现的，它不保证元素的顺序，并允许一个 `null` 键和多个 `null` 值。
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class HashMapExample {
+    public static void main(String[] args) {
+        // 创建一个HashMap实例
+        Map<String, Integer> hashMap = new HashMap<>();
+
+        // 添加键值对
+        hashMap.put("Alice", 23);
+        hashMap.put("Bob", 27);
+        hashMap.put("Charlie", 21);
+
+        // 获取特定键对应的值
+        System.out.println("Age of Bob: " + hashMap.get("Bob"));
+
+        // 遍历Map
+        for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+        // 检查是否存在某个键
+        if (hashMap.containsKey("Alice")) {
+            System.out.println("Contains Alice");
+        }
+    }
+}
+```
+
+### 2. 使用 LinkedHashMap
+
+`LinkedHashMap` 继承自 `HashMap`，但它维护了一个双向链表来记录插入顺序或访问顺序（根据构造函数的选择），因此它可以按照插入顺序或最近最少使用的顺序来迭代元素。
+
+```java
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class LinkedHashMapExample {
+    public static void main(String[] args) {
+        // 创建一个LinkedHashMap实例，按插入顺序排序
+        Map<String, Integer> linkedHashMap = new LinkedHashMap<>(16, .75f, true);
+
+        // 添加键值对
+        linkedHashMap.put("Alice", 23);
+        linkedHashMap.put("Bob", 27);
+        linkedHashMap.put("Charlie", 21);
+
+        // 访问某个键以改变其顺序
+        linkedHashMap.get("Alice");
+
+        // 遍历Map
+        for (Map.Entry<String, Integer> entry : linkedHashMap.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
+```
+
+### 3. 使用 TreeMap
+
+`TreeMap` 基于红黑树实现，键会按照自然顺序或者根据创建时提供的 `Comparator` 进行排序。
+
+```java
+import java.util.Map;
+import java.util.TreeMap;
+
+public class TreeMapExample {
+    public static void main(String[] args) {
+        // 创建一个TreeMap实例
+        Map<String, Integer> treeMap = new TreeMap<>();
+
+        // 添加键值对
+        treeMap.put("Alice", 23);
+        treeMap.put("Bob", 27);
+        treeMap.put("Charlie", 21);
+
+        // 按照键的字母顺序遍历Map
+        for (Map.Entry<String, Integer> entry : treeMap.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
+```
+
+### 4. 使用 ConcurrentHashMap
+
+`ConcurrentHashMap` 是线程安全的哈希表实现，适用于高并发环境。它提供了比同步的 `HashMap` 更好的并发性能。
+
+```java
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+
+public class ConcurrentHashMapExample {
+    public static void main(String[] args) throws InterruptedException {
+        // 创建一个ConcurrentHashMap实例
+        Map<String, Integer> concurrentHashMap = new ConcurrentHashMap<>();
+
+        // 添加键值对
+        concurrentHashMap.put("Alice", 23);
+        concurrentHashMap.put("Bob", 27);
+        concurrentHashMap.put("Charlie", 21);
+
+        // 并发环境下的操作示例（这里仅演示简单添加）
+        Runnable task = () -> concurrentHashMap.put("David", 29);
+        
+        Thread thread = new Thread(task);
+        thread.start();
+        thread.join(); // 等待线程完成
+        
+        // 打印所有键值对
+        for (Map.Entry<String, Integer> entry : concurrentHashMap.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
+```
+
+### 总结
+
+- **HashMap**：最常用的映射实现，提供快速查找、插入和删除操作。
+- **LinkedHashMap**：除了拥有 `HashMap` 的功能外，还能保持元素的插入顺序或访问顺序。
+- **TreeMap**：按键的自然顺序或指定比较器排序，适合需要有序遍历的场景。
+- **ConcurrentHashMap**：为高并发环境设计，提供更好的并发性能。
+
+选择合适的 `Map` 实现取决于你的具体需求，包括是否需要排序、是否允许多线程访问等。理解每种实现的特点有助于做出最佳选择。
 # 面向对象编程(OOP)
 ## 什么是面向对象编程?
 面向对象编程（Object-Oriented Programming，简称OOP）是一种编程范式，它将现实世界中的对象及其相互作用抽象为程序中的对象和类。以下是面向对象编程的一些核心概念和特点：
@@ -8825,35 +9097,6 @@ public class IterateExample {
 
 
 
-# 面试基础问题
-1. **为什么重写 equals还要重写 hashcode?**
-   在Java中，当对象作为哈希表（如`HashMap`、`HashSet`）的键时，`equals`方法用于比较两个对象是否相等，而`hashCode`方法用于确定对象在哈希表中的存储位置。如果两个对象通过`equals`方法判断为相等，它们的`hashCode`值也必须相等，否则会导致哈希表中的数据结构出现问题，比如无法正确地检索到对象。因此，当你重写`equals`方法时，通常也需要重写`hashCode`方法以保持这两个方法的一致性。
-
-2. **`==`和`equals`比较的区别**
-   - `==`操作符用于比较两个对象的引用是否相同，即它们是否指向内存中的同一个位置。
-   - `equals`方法用于比较两个对象的内容是否相等。对于自定义类，如果不重写`equals`方法，默认比较的是对象的引用（即使用`==`）。但通常建议重写`equals`方法以实现基于对象内容的比较逻辑。
-
-3. **为什么有时会出现 `4.0-3.6=0.40000001` 这种现象?**
-   这种现象是由于浮点数在计算机中的表示方式引起的。浮点数（如`float`和`double`）是基于IEEE 754标准进行编码的，这可能导致精度问题。由于二进制浮点数无法精确表示某些十进制小数，因此在进行运算时可能会出现舍入误差。在实际编程中，如果需要精确的小数运算，推荐使用`BigDecimal`类。
-
-4. **`final`关键字的作用**
-   - 当`final`用于类时，表示该类不能被继承。
-   - 当`final`用于方法时，表示该方法不能被子类重写。
-   - 当`final`用于变量时，表示该变量一旦被赋值后，其值就不能被改变（基本数据类型变量的值不可变，引用类型变量的引用不可变，但引用的对象内容可以改变）。
-
-5. **介绍Java的集合类**
-   Java集合框架提供了用于存储和操作对象集合的接口和类。主要分为两大类：
-   - `Collection`接口：单列集合，包括`List`（有序集合，如`ArrayList`、`LinkedList`）、`Set`（不允许重复元素的集合，如`HashSet`、`LinkedHashSet`）和`Queue`（队列，如`PriorityQueue`）。
-   - `Map`接口：双列集合，用于存储键值对，如`HashMap`、`TreeMap`、`LinkedHashMap`等。
-
-6. **`ArrayList` 和 `LinkedList`的区别**
-   - `ArrayList`基于动态数组实现，适合随机访问元素，但在列表中间插入或删除元素时效率较低，因为需要移动后续所有元素。
-   - `LinkedList`基于双向链表实现，适合在列表中间进行插入和删除操作，因为不需要移动元素，只需要调整节点的链接。但在随机访问元素时效率较低，因为需要从头开始遍历链表。
-   - 选择`ArrayList`还是`LinkedList`取决于具体的应用场景和操作类型。如果频繁进行随机访问，推荐使用`ArrayList`；如果频繁进行插入和删除操作，推荐使用`LinkedList`。
-
-
-
-
 # 自创问题
 ## 对象的引用和对象的内容
 
@@ -9776,6 +10019,34 @@ User: Alan, 25
 - **匿名对象**可以作为参数传递，特别是在临时使用时。
 
 选择哪种方式取决于具体的应用场景和需求。
+
+
+
+# 面试基础问题
+1. **为什么重写 equals还要重写 hashcode?**
+   在Java中，当对象作为哈希表（如`HashMap`、`HashSet`）的键时，`equals`方法用于比较两个对象是否相等，而`hashCode`方法用于确定对象在哈希表中的存储位置。如果两个对象通过`equals`方法判断为相等，它们的`hashCode`值也必须相等，否则会导致哈希表中的数据结构出现问题，比如无法正确地检索到对象。因此，当你重写`equals`方法时，通常也需要重写`hashCode`方法以保持这两个方法的一致性。
+
+2. **`==`和`equals`比较的区别**
+   - `==`操作符用于比较两个对象的引用是否相同，即它们是否指向内存中的同一个位置。
+   - `equals`方法用于比较两个对象的内容是否相等。对于自定义类，如果不重写`equals`方法，默认比较的是对象的引用（即使用`==`）。但通常建议重写`equals`方法以实现基于对象内容的比较逻辑。
+
+3. **为什么有时会出现 `4.0-3.6=0.40000001` 这种现象?**
+   这种现象是由于浮点数在计算机中的表示方式引起的。浮点数（如`float`和`double`）是基于IEEE 754标准进行编码的，这可能导致精度问题。由于二进制浮点数无法精确表示某些十进制小数，因此在进行运算时可能会出现舍入误差。在实际编程中，如果需要精确的小数运算，推荐使用`BigDecimal`类。
+
+4. **`final`关键字的作用**
+   - 当`final`用于类时，表示该类不能被继承。
+   - 当`final`用于方法时，表示该方法不能被子类重写。
+   - 当`final`用于变量时，表示该变量一旦被赋值后，其值就不能被改变（基本数据类型变量的值不可变，引用类型变量的引用不可变，但引用的对象内容可以改变）。
+
+5. **介绍Java的集合类**
+   Java集合框架提供了用于存储和操作对象集合的接口和类。主要分为两大类：
+   - `Collection`接口：单列集合，包括`List`（有序集合，如`ArrayList`、`LinkedList`）、`Set`（不允许重复元素的集合，如`HashSet`、`LinkedHashSet`）和`Queue`（队列，如`PriorityQueue`）。
+   - `Map`接口：双列集合，用于存储键值对，如`HashMap`、`TreeMap`、`LinkedHashMap`等。
+
+6. **`ArrayList` 和 `LinkedList`的区别**
+   - `ArrayList`基于动态数组实现，适合随机访问元素，但在列表中间插入或删除元素时效率较低，因为需要移动后续所有元素。
+   - `LinkedList`基于双向链表实现，适合在列表中间进行插入和删除操作，因为不需要移动元素，只需要调整节点的链接。但在随机访问元素时效率较低，因为需要从头开始遍历链表。
+   - 选择`ArrayList`还是`LinkedList`取决于具体的应用场景和操作类型。如果频繁进行随机访问，推荐使用`ArrayList`；如果频繁进行插入和删除操作，推荐使用`LinkedList`。
 # 资源
 ### [Java学习路线](https://www.code-nav.cn/course/1789189862986850306/section/1789190431398928386?contentType=text)
 
