@@ -422,6 +422,7 @@ public class AppConfig {
 ```java
 @Configuration
 public class AppConfig {
+//返回一个实例
     @Bean
     public MyBean myBean() {
         return new MyBean();
