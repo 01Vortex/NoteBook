@@ -9876,75 +9876,6 @@ public class Box<T> {
 
 
 ## 常见的传入参数的方式
-## 子类的对象类型和父类相同
-在面向对象编程中，子类和父类之间的关系是基于继承的。子类继承自父类，因此子类对象可以看作是父类的一个特例。这意味着在某些情况下，子类对象可以被当作父类对象来使用。这种特性称为“多态性”。
-
-### 子类对象被视为父类对象的实例
-
-1. **向上转型（Upcasting）**：
-   - 当你将一个子类对象赋值给一个父类类型的变量时，这就是向上转型。例如：
-
-     ```java
-     class Animal {
-         void makeSound() {
-             System.out.println("Animal makes a sound");
-         }
-     }
-
-     class Dog extends Animal {
-         void makeSound() {
-             System.out.println("Dog barks");
-         }
-     }
-
-     public class Main {
-         public static void main(String[] args) {
-             Animal myDog = new Dog(); // 向上转型
-             myDog.makeSound(); // 输出: Dog barks
-         }
-     }
-     ```
-
-     在这个例子中，`myDog` 被声明为 `Animal` 类型，但它实际上引用的是一个 `Dog` 对象。这就是子类对象被视为父类对象的一个实例。
-
-2. **多态性**：
-   - 多态性允许你编写更通用的代码。例如，你可以编写一个方法，接受一个 `Animal` 类型的参数，但实际上传入的是 `Dog`、`Cat` 等子类对象。
-
-     ```java
-     public void performAction(Animal animal) {
-         animal.makeSound();
-     }
-
-     // 调用时
-     performAction(new Dog()); // 输出: Dog barks
-     performAction(new Cat()); // 输出: Cat meows
-     ```
-
-### 注意事项
-
-- **方法重写（Override）**：
-  - 子类可以重写父类的方法。当通过父类类型的引用调用被重写的方法时，实际执行的是子类的方法（前提是方法没有被声明为 `final` 或 `static`）。
-
-- **访问权限**：
-  - 子类可以访问父类的 `public` 和 `protected` 成员，但不能访问 `private` 成员。
-
-- **类型检查**：
-  - 你可以使用 `instanceof` 关键字来检查一个对象是否是某个类的实例，包括其子类。
-
-     ```java
-     if (myDog instanceof Dog) {
-         System.out.println("myDog is a Dog");
-     }
-
-     if (myDog instanceof Animal) {
-         System.out.println("myDog is an Animal");
-     }
-     ```
-
-### 总结
-
-子类对象被视为父类对象的实例，这是面向对象编程中一个重要的概念。它允许你编写更灵活和可扩展的代码，利用多态性来实现更通用的功能。
-
 ### 1. **按值传递**
 Java中所有的参数传递都是**按值传递**的，这意味着传递的是参数值的副本。对于基本数据类型（如 `int`、`double` 等）和不可变对象（如 `String`），传递的是值的副本。
 
@@ -10087,6 +10018,76 @@ User: Alan, 25
 - **匿名对象**可以作为参数传递，特别是在临时使用时。
 
 选择哪种方式取决于具体的应用场景和需求。
+
+
+## 子类的对象类型和父类相同
+在面向对象编程中，子类和父类之间的关系是基于继承的。子类继承自父类，因此子类对象可以看作是父类的一个特例。这意味着在某些情况下，子类对象可以被当作父类对象来使用。这种特性称为“多态性”。
+
+### 子类对象被视为父类对象的实例
+
+1. **向上转型（Upcasting）**：
+   - 当你将一个子类对象赋值给一个父类类型的变量时，这就是向上转型。例如：
+
+     ```java
+     class Animal {
+         void makeSound() {
+             System.out.println("Animal makes a sound");
+         }
+     }
+
+     class Dog extends Animal {
+         void makeSound() {
+             System.out.println("Dog barks");
+         }
+     }
+
+     public class Main {
+         public static void main(String[] args) {
+             Animal myDog = new Dog(); // 向上转型
+             myDog.makeSound(); // 输出: Dog barks
+         }
+     }
+     ```
+
+     在这个例子中，`myDog` 被声明为 `Animal` 类型，但它实际上引用的是一个 `Dog` 对象。这就是子类对象被视为父类对象的一个实例。
+
+2. **多态性**：
+   - 多态性允许你编写更通用的代码。例如，你可以编写一个方法，接受一个 `Animal` 类型的参数，但实际上传入的是 `Dog`、`Cat` 等子类对象。
+
+     ```java
+     public void performAction(Animal animal) {
+         animal.makeSound();
+     }
+
+     // 调用时
+     performAction(new Dog()); // 输出: Dog barks
+     performAction(new Cat()); // 输出: Cat meows
+     ```
+
+### 注意事项
+
+- **方法重写（Override）**：
+  - 子类可以重写父类的方法。当通过父类类型的引用调用被重写的方法时，实际执行的是子类的方法（前提是方法没有被声明为 `final` 或 `static`）。
+
+- **访问权限**：
+  - 子类可以访问父类的 `public` 和 `protected` 成员，但不能访问 `private` 成员。
+
+- **类型检查**：
+  - 你可以使用 `instanceof` 关键字来检查一个对象是否是某个类的实例，包括其子类。
+
+     ```java
+     if (myDog instanceof Dog) {
+         System.out.println("myDog is a Dog");
+     }
+
+     if (myDog instanceof Animal) {
+         System.out.println("myDog is an Animal");
+     }
+     ```
+
+### 总结
+
+子类对象被视为父类对象的实例，这是面向对象编程中一个重要的概念。它允许你编写更灵活和可扩展的代码，利用多态性来实现更通用的功能。
 
 
 
