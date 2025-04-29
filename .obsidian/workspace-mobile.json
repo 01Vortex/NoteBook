@@ -170,6 +170,11 @@
   },
   "active": "eaa7a00f576c74d5",
   "lastOpenFiles": [
+    "项目设计/各层的设计/实体层.md",
+    "Spring Framework/Spring Framework M & E/Spring Data JPA.md",
+    "项目设计/各层的设计/数据持久层(DAO).md",
+    "项目设计/各层的设计",
+    "SpringData JPA.md",
     "Spring Framework/Spring Framework M & E/Spring MVC.md",
     "Spring Framework/Spring Framework M & E/SpringBoot2.md",
     "Spring Framework/Spring Framework M & E/Spring Security.md",
@@ -192,10 +197,6 @@
     "服务端/Maven.md",
     "前端/Vue3.md",
     "前端/JSON.md",
-    "前端/HTML.md",
-    "服务端/PHP.md",
-    "前端/JavaScript.md",
-    "数据库/MySQL.md",
     "其他/IMG/Screenshot_20241012_023234.jpg",
     "其他/IMG/Screenshot_20241012_023647.jpg",
     "其他/问题",
@@ -214,7 +215,6 @@
     "z其他/IMG",
     "z其他/项目分析",
     "z其他",
-    "运维",
-    "安卓开发"
+    "运维"
   ]
 }
