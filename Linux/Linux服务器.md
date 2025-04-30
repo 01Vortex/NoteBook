@@ -1,9 +1,42 @@
+## 自定义端口
+- 2000 ssh
+- 2001 bt面板
+- 2002 lib存储库
+- 2003 redis
+- 2077 blog
+- 2076 nav
+
+## CentOS7更换镜像源
+由于 CentOS 7 的官方仓库已经 **停止更新和维护**，你需要将默认仓库源替换为一个仍然提供 CentOS 7 软件包的镜像站。以下是使用阿里云镜像的步骤：
+
+### 备份原来的 repo 文件
+
+```bash
+sudo mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+```
+
+### 下载阿里云提供的 CentOS-Base.repo 文件
+
+```bash
+sudo curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+```
+
+### 清除缓存并生成新缓存
+
+```bash
+sudo yum clean all
+sudo yum makecache
+```
+
+### 尝试更新
+
+```bash
+sudo yum update
+```
 
 
-# 日志
-## 安装普罗米修斯
-# 数据库问题
 ## 无法连接本地数据库
+
 - 在MySQL配置文件的[mysqlid]添加，然后重启
 ```
 bind-address = 127.0.0.1
@@ -11,7 +44,7 @@ bind-address = 127.0.0.1
 
 
 
-## 关于MySQL排序规则的选择
+## MySQL排序规则的选择
 在MySQL中，选择合适的排序规则（Collation）对于确保数据的正确排序、比较和索引至关重要。以下是选择MySQL数据库排序规则时需要考虑的关键因素和具体建议：
 
 ### 1. **理解MySQL的排序规则命名规范**
@@ -95,18 +128,4 @@ CREATE DATABASE multilingual_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 - **性能**：一般来说，`general_ci`比`unicode_ci`性能更好，但排序准确性稍低。
 
 通过综合考虑这些因素，可以选择最适合你应用的MySQL排序规则。
-
-
-# 端口
-- 2000 ssh
-- 2001 bt面板
-- 2002 lib存储库
-- 2003 redis
-- 2077 blog
-- 2076 nav
-
-
-
-
-
 
