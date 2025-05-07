@@ -1394,7 +1394,7 @@ public MyPlugin myPlugin() {
 
 在 `src/main/resources` 目录下创建 `application.properties` 文件，并添加以下配置：
 
-```properties
+```
 # 数据源配置
 spring.datasource.url=jdbc:mysql://localhost:3306/mydb?useSSL=false&serverTimezone=UTC
 spring.datasource.username=root
@@ -3949,6 +3949,70 @@ sqlSession.close();
 
 
 
+# MyBatis-Plus
+MyBatis-Plus 是一个 MyBatis 的增强工具，旨在简化开发、提高效率。它不仅继承了 MyBatis 的所有功能，还提供了许多便捷的功能和特性。以下是 MyBatis-Plus 中一些核心类及其核心方法的概述：
+
+### 核心类
+
+1. **`BaseMapper<T>`**
+   - **作用**：提供基础的 CRUD 操作接口。
+   - **泛型说明**：`T` 代表实体类类型。
+   - **常用方法**：
+     - `int insert(T entity)`：插入一条记录。
+     - `int deleteById(Serializable id)`：根据主键 ID 删除记录。
+     - `int updateById(@Param("et") T entity)`：根据主键 ID 更新记录。
+     - `T selectById(Serializable id)`：根据主键 ID 查询一条记录。
+     - `List<T> selectBatchIds(Collection<? extends Serializable> idList)`：根据多个 ID 批量查询记录。
+     - `List<T> selectByMap(@Param("cm") Map<String, Object> columnMap)`：根据 `columnMap` 条件查询记录。
+     - `T selectOne(@Param("ew") Wrapper<T> queryWrapper)`：根据条件包装器查询一条记录。
+     - `List<T> selectList(@Param("ew") Wrapper<T> queryWrapper)`：根据条件包装器查询记录列表。
+     - `IPage<T> selectPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper)`：分页查询。
+
+2. **`QueryWrapper<T>` 和 `LambdaQueryWrapper<T>`**
+   - **作用**：用于构造复杂的查询条件。
+   - **区别**：`LambdaQueryWrapper` 使用 Lambda 表达式来避免字符串硬编码，减少错误。
+   - **常用方法**（以 `QueryWrapper` 为例）：
+     - `eq(String column, Object val)`：等于条件。
+     - `ne(String column, Object val)`：不等于条件。
+     - `gt(String column, Object val)`：大于条件。
+     - `ge(String column, Object val)`：大于等于条件。
+     - `lt(String column, Object val)`：小于条件。
+     - `le(String column, Object val)`：小于等于条件。
+     - `like(String column, Object val)`：模糊匹配。
+     - `orderByAsc(boolean condition, String... columns)`：升序排序。
+     - `groupBy(String... columns)`：分组。
+
+3. **`UpdateWrapper<T>` 和 `LambdaUpdateWrapper<T>`**
+   - **作用**：用于构造更新操作的条件。
+   - **常用方法**（以 `UpdateWrapper` 为例）：
+     - `set(String column, Object val)`：设置更新字段。
+     - `eq(String column, Object val)`：等于条件。
+     - 其他条件方法与 `QueryWrapper` 类似。
+
+4. **`IService<T>` 和 `ServiceImpl<M, T>`**
+   - **作用**：提供更高级别的服务层抽象，支持事务管理等高级功能。
+   - **常用方法**（`IService` 接口中的部分方法）：
+     - `boolean save(T entity)`：保存单个实体。
+     - `boolean saveBatch(Collection<T> entityList)`：批量保存实体。
+     - `boolean removeById(Serializable id)`：根据主键删除实体。
+     - `boolean updateById(T entity)`：根据主键更新实体。
+     - `T getById(Serializable id)`：根据主键获取实体。
+     - `List<T> list()`：获取所有实体列表。
+     - `IPage<T> page(IPage<T> page)`：分页查询。
+
+5. **`Wrapper<T>`**
+   - **作用**：作为查询条件的封装接口，`QueryWrapper`, `UpdateWrapper`, `LambdaQueryWrapper`, `LambdaUpdateWrapper` 都实现了该接口。
+
+### 核心概念
+
+- **CRUD 自动化**：通过继承 `BaseMapper<T>` 或实现 `IService<T>` 接口，可以快速获得基础的增删改查能力。
+- **条件构造器**：使用 `QueryWrapper`, `UpdateWrapper` 等条件构造器灵活构建查询和更新条件，支持链式调用。
+- **Lambda 表达式支持**：`LambdaQueryWrapper`, `LambdaUpdateWrapper` 提供了基于 Lambda 表达式的语法糖，增强了代码的可读性和类型安全性。
+- **自动填充**：支持配置自动填充策略，比如创建时间、更新时间等字段的自动填充。
+- **逻辑删除**：通过简单的配置即可实现逻辑删除而非物理删除。
+- **分页插件**：内置了分页插件，使得分页查询更加简便。
+
+这些核心类和方法构成了 MyBatis-Plus 的基础，帮助开发者简化数据访问层的开发工作，提高了开发效率并减少了出错的可能性。无论是小型项目还是大型企业级应用，MyBatis-Plus 都能提供强大的支持。
 # 高级映射
 ## 如何进行一对一、一对多、多对多映射?
 在 MyBatis 中进行一对一、一对多、多对多映射时，通常使用 XML 映射文件或注解来定义实体类之间的关系。以下是详细的说明和示例，展示如何在 MyBatis 中实现这些关系映射。
@@ -5394,7 +5458,7 @@ public class UserService {
 
 在 `application.properties` 或 `application.yml` 文件中配置连接池参数。以下是 `application.properties` 的示例配置：
 
-```properties
+```
 # 数据库连接信息
 spring.datasource.url=jdbc:mysql://localhost:3306/your_database?useSSL=false&serverTimezone=UTC
 spring.datasource.username=your_username
@@ -6199,3 +6263,316 @@ x：要设置的 String 值。
 
 #### 返回值：
 该方法没有返回值（void），它直接修改 PreparedStatement 对象的状态。
+
+
+
+## MyBatis-Plus中的核心类和核心方法
+## MyBatis-Plus中的`QueryWrapper<T>`类(1)
+`QueryWrapper` 是 MyBatis-Plus 提供的一个用于构造查询条件的封装类，它使得构建复杂的 SQL 查询更加简便。`QueryWrapper` 类继承自 `AbstractWrapper`，因此它不仅包含了 `AbstractWrapper` 的所有功能，还提供了一些额外的方法来简化查询条件的构建。
+
+### 泛型说明
+
+`QueryWrapper<T>` 是一个泛型类，其中 `T` 表示实体类类型。这意味着你可以针对特定的实体类创建一个 `QueryWrapper` 实例，以便更方便地进行数据库操作。
+
+### 常用方法概览
+
+以下是一些常用的 `QueryWrapper` 方法：
+
+#### 1. 条件构造
+- **eq**: 等于条件。
+  ```java
+  queryWrapper.eq("column_name", value);
+  ```
+- **ne**: 不等于条件。
+  ```java
+  queryWrapper.ne("column_name", value);
+  ```
+- **gt**: 大于条件。
+  ```java
+  queryWrapper.gt("column_name", value);
+  ```
+- **ge**: 大于等于条件。
+  ```java
+  queryWrapper.ge("column_name", value);
+  ```
+- **lt**: 小于条件。
+  ```java
+  queryWrapper.lt("column_name", value);
+  ```
+- **le**: 小于等于条件。
+  ```java
+  queryWrapper.le("column_name", value);
+  ```
+- **between**: 在两个值之间（包括边界）。
+  ```java
+  queryWrapper.between("column_name", value1, value2);
+  ```
+- **notBetween**: 不在两个值之间。
+  ```java
+  queryWrapper.notBetween("column_name", value1, value2);
+  ```
+- **like**: 模糊匹配。
+  ```java
+  queryWrapper.like("column_name", "pattern");
+  ```
+
+#### 2. 排序
+- **orderByAsc**: 升序排序。
+  ```java
+  queryWrapper.orderByAsc("column_name1", "column_name2");
+  ```
+- **orderByDesc**: 降序排序。
+  ```java
+  queryWrapper.orderByDesc("column_name1", "column_name2");
+  ```
+
+#### 3. 分组与聚合
+- **groupBy**: 分组。
+  ```java
+  queryWrapper.groupBy("column_name1", "column_name2");
+  ```
+- **having**: 使用 HAVING 子句过滤分组。
+  ```java
+  queryWrapper.having("sum(column_name) > {0}", value);
+  ```
+
+#### 4. 其他
+- **select**: 指定查询哪些列。
+  ```java
+  queryWrapper.select("column_name1", "column_name2");
+  // 或者使用 lambda 表达式
+  queryWrapper.select(User::getName, User::getAge);
+  ```
+- **lambda语法支持**：为了提高代码的可读性和减少字符串硬编码，MyBatis-Plus 支持 Lambda 表达式。
+  ```java
+  queryWrapper.lambda().eq(User::getName, "zhangsan");
+  ```
+
+#### 5. 清除条件
+- **clear**：清除所有条件。
+  ```java
+  queryWrapper.clear();
+  ```
+
+这些方法可以帮助你快速构建复杂的查询条件，而不需要手动编写 SQL 语句。`QueryWrapper` 结合 MyBatis-Plus 的强大功能，大大简化了数据访问层的开发工作。需要注意的是，尽管 `QueryWrapper` 非常灵活和强大，但在使用时也应考虑到SQL注入的风险，虽然MyBatis-Plus已经做了很多防止SQL注入的工作，但合理使用参数化查询仍然是最佳实践。
+
+## MyBatis-Plus中的`QueryWrapper<T>`类(2)
+`QueryWrapper` 是 MyBatis-Plus 提供的用于构造查询条件的封装类。当你需要执行增删改查操作时，根据具体的操作类型（插入、删除、更新或查询），你可能不需要或者需要不同方式使用 `QueryWrapper`。下面将展示如何针对不同的数据库操作调整你的代码。
+
+### 1. **插入数据 (Insert)**
+
+插入数据时，通常不需要使用 `QueryWrapper`，因为插入操作主要是向数据库中添加一条新记录，而不是基于某些条件进行操作。
+
+```java
+Users newUser = new Users();
+newUser.setUsername("exampleUsername");
+newUser.setPassword("examplePassword");
+
+// 插入新用户
+int result = usersMapper.insert(newUser);
+```
+
+### 2. **根据条件删除数据 (Delete)**
+
+当删除数据时，你可以使用 `QueryWrapper` 来指定删除条件。
+
+```java
+// 构建删除条件
+QueryWrapper<Users> wrapper = new QueryWrapper<>();
+wrapper.eq("username", username);
+
+// 根据条件删除用户
+int deletedRows = usersMapper.delete(wrapper);
+```
+
+如果你想根据主键删除数据，则可以直接调用 `deleteById` 方法，无需使用 `QueryWrapper`：
+
+```java
+// 直接根据ID删除
+int deletedRows = usersMapper.deleteById(userId);
+```
+
+### 3. **更新数据 (Update)**
+
+更新数据时，你也需要使用 `QueryWrapper` 来指定更新条件，并且需要提供要更新的数据实体。
+
+```java
+// 准备要更新的数据
+Users updateUser = new Users();
+updateUser.setPassword("newPassword");
+
+// 构建更新条件
+QueryWrapper<Users> wrapper = new QueryWrapper<>();
+wrapper.eq("username", username);
+
+// 执行更新操作
+int updatedRows = usersMapper.update(updateUser, wrapper);
+```
+
+如果你是根据主键来更新数据，则可以使用 `updateById` 方法，同样无需使用 `QueryWrapper`：
+
+```java
+Users updateUser = new Users();
+updateUser.setId(1L); // 假设这是你要更新的用户的ID
+updateUser.setPassword("newPassword");
+
+// 根据ID更新用户信息
+int updatedRows = usersMapper.updateById(updateUser);
+```
+
+### 4. **查询数据 (Select)**
+
+查询数据时，正如你在原始示例中所做的那样，你可以使用 `QueryWrapper` 来构建查询条件。
+
+#### 查询单个用户
+
+```java
+QueryWrapper<Users> wrapper = new QueryWrapper<>();
+wrapper.eq("username", username);
+
+// 查询单个用户
+Users user = usersMapper.selectOne(wrapper);
+```
+
+#### 查询多个用户
+
+如果你想查询满足特定条件的所有用户，可以使用 `selectList` 方法：
+
+```java
+QueryWrapper<Users> wrapper = new QueryWrapper<>();
+wrapper.like("username", "example"); // 模糊匹配用户名包含"example"的所有用户
+
+// 查询所有符合条件的用户列表
+List<Users> userList = usersMapper.selectList(wrapper);
+```
+
+#### 分页查询
+
+如果需要分页查询，可以使用 `selectPage` 方法：
+
+```java
+Page<Users> page = new Page<>(currentPage, pageSize); // currentPage: 当前页码, pageSize: 每页大小
+QueryWrapper<Users> wrapper = new QueryWrapper<>();
+wrapper.gt("age", 18); // 年龄大于18岁的用户
+
+// 执行分页查询
+IPage<Users> userPage = usersMapper.selectPage(page, wrapper);
+```
+
+### 总结
+
+- **插入**：直接调用 `insert(T entity)` 方法，不涉及 `QueryWrapper`。
+- **删除**：可以通过 `delete(Wrapper<T> wrapper)` 或 `deleteById(Serializable id)` 方法，前者需要 `QueryWrapper` 来定义删除条件。
+- **更新**：可以使用 `update(T entity, Wrapper<T> updateWrapper)` 或 `updateById(T entity)` 方法，前者需要 `QueryWrapper` 来定义更新条件。
+- **查询**：无论是查询单条记录还是多条记录，都可以使用 `QueryWrapper` 来精确控制查询条件。对于分页查询，还可以结合 `Page` 对象一起使用。
+
+通过灵活运用这些方法和 `QueryWrapper`，你可以轻松实现对数据库的各种增删改查操作。
+
+## MyBatis-Plus中的`BaseMapper<T>` 类
+
+`BaseMapper<T>` 是 MyBatis-Plus 框架中的一个核心接口，它为实体类提供了基础的 CRUD（创建、读取、更新、删除）操作方法。通过继承 `BaseMapper<T>` 接口，你可以直接获得这些通用的数据访问方法，而无需手动编写 SQL 语句或 DAO 层代码。以下是 `BaseMapper<T>` 中提供的一些常用方法：
+
+### 基础 CRUD 方法
+
+1. **插入数据**
+   - `int insert(T entity)`：插入一条记录（选择字段，策略插入）。
+   
+2. **根据 ID 删除数据**
+   - `int deleteById(Serializable id)`：根据主键 ID 删除记录。
+   - `int deleteByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap)`：根据 `columnMap` 条件删除记录。
+   - `int delete(@Param(Constants.WRAPPER) Wrapper<T> wrapper)`：根据条件包装器删除记录。
+   - `int deleteBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList)`：根据多个 ID 批量删除记录。
+
+3. **根据 ID 更新数据**
+   - `int updateById(@Param(Constants.ENTITY) T entity)`：根据主键 ID 更新记录（选择字段更新）。
+   - `int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper)`：根据条件包装器更新记录。
+
+4. **查询单条数据**
+   - `T selectById(Serializable id)`：根据主键 ID 查询一条记录。
+   - `T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper)`：根据条件包装器查询一条记录。注意，如果有多条记录满足条件，则会抛出异常。
+
+5. **查询多条数据**
+   - `List<T> selectBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList)`：根据多个 ID 批量查询记录。
+   - `List<T> selectByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap)`：根据 `columnMap` 条件查询记录。
+   - `List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper)`：根据条件包装器查询记录列表。
+   - `IPage<T> selectPage(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper)`：分页查询记录列表。
+
+6. **统计数量**
+   - `Integer selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper)`：根据条件包装器统计总记录数。
+
+### 示例
+
+假设你有一个 `Users` 实体类，并且你的 `UsersMapper` 继承了 `BaseMapper<Users>`，那么你可以这样使用这些方法：
+
+```java
+// 插入新用户
+usersMapper.insert(newUser);
+
+// 根据ID删除用户
+usersMapper.deleteById(1L);
+
+// 更新用户信息
+Users updateUser = new Users();
+updateUser.setId(1L);
+updateUser.setAge(25);
+usersMapper.updateById(updateUser);
+
+// 查询单个用户
+Users user = usersMapper.selectById(1L);
+
+// 根据条件查询用户列表
+QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+queryWrapper.eq("age", 20);
+List<Users> userList = usersMapper.selectList(queryWrapper);
+
+// 分页查询
+Page<Users> page = new Page<>(1, 10); // 第一页，每页10条
+IPage<Users> userPage = usersMapper.selectPage(page, queryWrapper);
+```
+
+这些方法极大地简化了数据库操作，使得开发者可以专注于业务逻辑的实现，而不需要过多地关注底层的数据库交互细节。同时，MyBatis-Plus 还支持更多的高级功能，如自动填充、逻辑删除等，进一步提升了开发效率和灵活性。
+## 没有创建并配置 QueryWrapper 对象后果
+如果你在使用 MyBatis-Plus 进行数据库查询时，没有创建并配置 `QueryWrapper` 对象（如 `QueryWrapper<Users> wrapper = new QueryWrapper<Users>().eq("username", username);`），那么你将无法指定具体的查询条件。这意味着：
+
+### 1. **默认行为**
+   - 如果直接调用 `usersMapper.selectOne()` 而不传递任何查询条件（即传入 `null` 或者根本不设置查询条件），MyBatis-Plus 可能会尝试执行一个没有任何 `WHERE` 子句的 SQL 查询。这通常会导致：
+     - **返回表中的第一条记录**：如果数据库中有唯一主键，并且 `selectOne` 方法期望只返回一条记录，可能会根据主键排序返回第一条记录。
+     - **抛出异常**：如果有多个记录符合条件（实际上是没有限制条件，所以可能匹配多条记录），`selectOne` 方法会因为预期返回单条记录而实际返回了多条记录的情况抛出异常。
+
+### 2. **具体影响**
+   在你的代码上下文中，假设你在实现 Spring Security 的 `UserDetailsService` 接口的 `loadUserByUsername` 方法中省略了 `QueryWrapper` 的构建和条件设置：
+
+```java
+// 省略了 QueryWrapper 的构建
+Users user = usersMapper.selectOne(null);
+```
+
+这会导致：
+
+- **逻辑错误**：你希望根据用户名来查找用户信息，但如果没有设置查询条件，系统不会知道你要查找哪个用户的记录。
+- **潜在的安全问题**：如果不正确地处理这种情况，可能会导致非预期的行为，比如总是返回同一个用户的信息，或者抛出异常，进而影响应用的安全性和稳定性。
+
+### 3. **正确的做法**
+
+为了确保能够准确地根据用户名查找用户信息，你应该使用 `QueryWrapper` 来构建查询条件：
+
+```java
+QueryWrapper<Users> wrapper = new QueryWrapper<Users>().eq("username", username);
+Users user = usersMapper.selectOne(wrapper);
+```
+
+这样做可以明确告诉 MyBatis-Plus 根据哪个字段（这里是 `username`）以及对应的值（传入的 `username` 参数）来进行精确匹配查询。
+
+### 4. **总结**
+
+- **必须指定查询条件**：除非你确实想要获取所有记录中的第一条（这在大多数情况下并不是预期的行为），否则应当通过 `QueryWrapper` 指定查询条件。
+- **增强代码健壮性**：添加对查询结果的检查（例如，确认是否找到了用户，如果没有找到则抛出 `UsernameNotFoundException`），以增强代码的健壮性和安全性。例如：
+
+```java
+Users user = usersMapper.selectOne(wrapper);
+if (user == null) {
+    throw new UsernameNotFoundException("用户不存在: " + username);
+}
+```
+
+这样可以确保当找不到对应用户名的用户时，能够及时反馈给调用者，避免后续流程出现错误。

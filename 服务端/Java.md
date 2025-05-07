@@ -10089,13 +10089,55 @@ User: Alan, 25
 
 子类对象被视为父类对象的实例，这是面向对象编程中一个重要的概念。它允许你编写更灵活和可扩展的代码，利用多态性来实现更通用的功能。
 
+## `BaseMapper<Users>`
+```java
+public interface UsersMapper extends BaseMapper<Users> { }
+```
+`BaseMapper<Users>` 使用了 Java 的泛型机制
 
-## 关于`List<String> list`
+- **`BaseMapper`**：这是一个接口或抽象类，它定义了一些通用的方法，这些方法可以作用于各种不同的实体类型。通过使用泛型，`BaseMapper` 可以提供一套不依赖于具体类型的数据库操作方法（如插入、删除、更新等）。
+  
+- **`<Users>`**：这里的 `Users` 是传递给 `BaseMapper` 的类型参数。这意味着你希望 `BaseMapper` 提供的方法专门针对 `Users` 类型的数据进行操作。例如，如果你调用 `BaseMapper` 中的一个查询所有记录的方法，它将返回 `Users` 类型的对象列表。
+
+### 用途
+
+这种设计方式有几个优点：
+
+1. **代码复用**：通过定义一个通用的 `BaseMapper` 接口，可以为不同的实体类型提供相同的基础功能，而不需要为每个实体类型重复编写相同的数据库访问代码。
+
+2. **类型安全**：使用泛型确保了编译时类型检查，避免了类型转换错误。比如，在没有泛型的情况下，你需要手动将从数据库获取的对象转换为目标类型，这容易导致 `ClassCastException`。而使用泛型后，这种转换是在编译期处理的，减少了运行时错误的可能性。
+
+3. **灵活性**：你可以很容易地扩展 `BaseMapper` 来适应特定的需求。例如，如果你需要为 `Users` 实体添加一些特殊的查询方法，你可以创建一个继承自 `BaseMapper<Users>` 的新接口，并在其中添加这些方法。
+
+### 示例
+
+假设 `BaseMapper` 定义如下：
+
+```java
+public interface BaseMapper<T> {
+    int insert(T entity);
+    int deleteById(Long id);
+    int updateById(T entity);
+    T selectById(Long id);
+}
+```
+
+那么，当你定义 `UsersMapper` 如下：
+
+```java
+public interface UsersMapper extends BaseMapper<Users> {
+}
+```
+
+此时，`UsersMapper` 就拥有了 `insert(Users user)`、`deleteById(Long id)`、`updateById(Users user)` 和 `selectById(Long id)` 等方法，它们都是针对 `Users` 类型的操作。
+
+这种方法非常适合用于实现数据访问层，简化了与数据库交互的代码量，并提高了代码的可维护性和可读性。
+## `List<String> list`
 - 数据结构-->list = ["AAA", "Hello", "FF"]
 List代表列表   String代表列表元素类型为String类型  list为一个实例
 
 
-## 关于`Optional<Role>`
+## `Optional<Role>`
 在你提供的代码中：
 
 ```java

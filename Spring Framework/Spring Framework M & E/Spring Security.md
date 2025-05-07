@@ -1,3 +1,64 @@
+# 核心类和方法
+Spring Security 是一个功能强大且高度可定制的身份验证和访问控制框架，用于保护基于 Spring 的 Java 应用程序。它提供了多种核心类和方法来帮助开发者实现安全功能。以下是 Spring Security 中一些关键的核心类及其主要职责和常用方法的概述：
+
+### 核心类
+
+1. **`AuthenticationManager`**
+   - **职责**：负责认证用户身份。
+   - **常用方法**：
+     - `authenticate(Authentication authentication)`：尝试认证提供的 `Authentication` 对象，并返回完全填充（包括授予的权限）的 `Authentication` 对象，如果认证失败，则抛出异常。
+
+2. **`UserDetailsService`**
+   - **职责**：根据用户名加载用户特定数据。
+   - **常用方法**：
+     - `loadUserByUsername(String username)`：根据用户名加载用户详情信息，通常包含用户的权限等信息。
+
+3. **`PasswordEncoder`**
+   - **职责**：用于加密密码和匹配加密后的密码与明文密码是否一致。
+   - **常用方法**：
+     - `encode(CharSequence rawPassword)`：对原始密码进行编码。
+     - `matches(CharSequence rawPassword, String encodedPassword)`：判断原始密码与已编码的密码是否匹配。
+
+4. **`HttpSecurity`**
+   - **职责**：配置应用程序的安全选项，如 HTTP 请求的安全约束。
+   - **常用方法**：
+     - `authorizeRequests()`：定义哪些 URL 需要什么样的权限才能访问。
+     - `formLogin()`：启用基于表单的登录。
+     - `logout()`：配置注销处理。
+     - `csrf().disable()` 或 `cors()`：配置跨站请求伪造保护或跨域资源共享支持。
+
+5. **`WebSecurityConfigurerAdapter` (Deprecated in newer versions)**
+   - **职责**：提供了一种便捷的方式来配置 Web 安全性，不过在最新的 Spring Security 版本中已经被标记为过时，推荐直接使用 `SecurityFilterChain` Bean 来配置。
+   - **常用方法**：
+     - `configure(HttpSecurity http)`：配置 HttpSecurity。
+     - `configure(AuthenticationManagerBuilder auth)`：配置认证管理器。
+
+6. **`SecurityContextHolder`**
+   - **职责**：持有当前线程的安全上下文。
+   - **常用方法**：
+     - `getContext()`：获取当前的安全上下文。
+     - `setContext(SecurityContext context)`：设置当前的安全上下文。
+
+7. **`UsernamePasswordAuthenticationToken`**
+   - **职责**：表示一个由用户名和密码组成的认证令牌。
+   - **常用构造函数/方法**：
+     - 构造函数：创建一个新的实例。
+     - `getAuthorities()`：获取此 Authentication 对象中的权限列表。
+
+8. **`JwtUtils` (非标准，自定义类)**
+   - **职责**：虽然不是 Spring Security 的一部分，但在使用 JWT 时经常会有一个类似的工具类来帮助生成、解析和验证 JWT。
+   - **常用方法**（假设实现）：
+     - `generateToken(UserDetails userDetails)`：生成 JWT。
+     - `validateToken(String token)`：验证 JWT 是否有效。
+     - `getUsernameFromToken(String token)`：从 JWT 中提取用户名。
+
+### 核心概念
+
+- **Authentication**：代表当前用户的身份认证状态。
+- **Authorization**：授权过程，决定用户是否有权执行特定操作。
+- **Security Context**：存储当前认证信息的地方，默认情况下通过 `ThreadLocal` 实现，使得每个请求都可以独立地拥有自己的安全上下文。
+
+这些核心类和概念共同构成了 Spring Security 的基础，帮助开发者轻松实现复杂的安全需求。随着 Spring Security 的版本更新，某些API可能会有所变化，因此建议查阅最新文档以获取最准确的信息。
 # Spring Security介绍
 
 ## Spring Security简介

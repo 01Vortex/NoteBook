@@ -17221,3 +17221,6 @@ public AuthenticationManager authenticationManagerBean() throws Exception {
 }
 ```
 总之，使用 `super.authenticationManagerBean()` 是一种推荐的做法，因为它利用了 Spring Security 的强大功能和最佳实践。
+
+
+
