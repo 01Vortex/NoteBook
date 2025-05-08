@@ -9094,10 +9094,248 @@ public class IterateExample {
 通过合理地使用这些新特性，可以编写出更加模块化、高效和现代的Java应用程序。
 
 
+# 面试基础问题
+1. **为什么重写 equals还要重写 hashcode?**
+   在Java中，当对象作为哈希表（如`HashMap`、`HashSet`）的键时，`equals`方法用于比较两个对象是否相等，而`hashCode`方法用于确定对象在哈希表中的存储位置。如果两个对象通过`equals`方法判断为相等，它们的`hashCode`值也必须相等，否则会导致哈希表中的数据结构出现问题，比如无法正确地检索到对象。因此，当你重写`equals`方法时，通常也需要重写`hashCode`方法以保持这两个方法的一致性。
+
+2. **`==`和`equals`比较的区别**
+   - `==`操作符用于比较两个对象的引用是否相同，即它们是否指向内存中的同一个位置。
+   - `equals`方法用于比较两个对象的内容是否相等。对于自定义类，如果不重写`equals`方法，默认比较的是对象的引用（即使用`==`）。但通常建议重写`equals`方法以实现基于对象内容的比较逻辑。
+
+3. **为什么有时会出现 `4.0-3.6=0.40000001` 这种现象?**
+   这种现象是由于浮点数在计算机中的表示方式引起的。浮点数（如`float`和`double`）是基于IEEE 754标准进行编码的，这可能导致精度问题。由于二进制浮点数无法精确表示某些十进制小数，因此在进行运算时可能会出现舍入误差。在实际编程中，如果需要精确的小数运算，推荐使用`BigDecimal`类。
+
+4. **`final`关键字的作用**
+   - 当`final`用于类时，表示该类不能被继承。
+   - 当`final`用于方法时，表示该方法不能被子类重写。
+   - 当`final`用于变量时，表示该变量一旦被赋值后，其值就不能被改变（基本数据类型变量的值不可变，引用类型变量的引用不可变，但引用的对象内容可以改变）。
+
+5. **介绍Java的集合类**
+   Java集合框架提供了用于存储和操作对象集合的接口和类。主要分为两大类：
+   - `Collection`接口：单列集合，包括`List`（有序集合，如`ArrayList`、`LinkedList`）、`Set`（不允许重复元素的集合，如`HashSet`、`LinkedHashSet`）和`Queue`（队列，如`PriorityQueue`）。
+   - `Map`接口：双列集合，用于存储键值对，如`HashMap`、`TreeMap`、`LinkedHashMap`等。
+
+6. **`ArrayList` 和 `LinkedList`的区别**
+   - `ArrayList`基于动态数组实现，适合随机访问元素，但在列表中间插入或删除元素时效率较低，因为需要移动后续所有元素。
+   - `LinkedList`基于双向链表实现，适合在列表中间进行插入和删除操作，因为不需要移动元素，只需要调整节点的链接。但在随机访问元素时效率较低，因为需要从头开始遍历链表。
+   - 选择`ArrayList`还是`LinkedList`取决于具体的应用场景和操作类型。如果频繁进行随机访问，推荐使用`ArrayList`；如果频繁进行插入和删除操作，推荐使用`LinkedList`。
+# 资源
+### [Java学习路线](https://www.code-nav.cn/course/1789189862986850306/section/1789190431398928386?contentType=text)
+
+
+### [IDEA中文教程](https://github.com/judasn/IntelliJ-IDEA-Tutorial )
+
+
+### [Java在线编译器](https://www.tutorialspoint.com/online_java_compiler.php)
+
+
+### [Java8小代码片段](https://github.com/hellokaton/30-seconds-of-java8)
+
+
+
+### 练手项目
+• Java 实现简单计算器：https://www.lanqiao.cn/courses/185
+
+• Eclipse 实现Java 编辑器：https://www.lanqiao.cn/courses/287
+
+一本糊涂账：https://how2j.cn/module/104.html
+
+
+• Java 五子棋：https://blog.csdn.net/cnlht/article/details/8176130
+
+
+• Java 中国象棋：https://blog.csdn.net/cnlht/article/details/8205733
+
+
+• JAVA GUI图书馆管理系统：https://github.com/uboger/LibraryManager
+
+• JAVA坦克大战小游戏：https://github.com/wangzhengyi/TankWar
+
+
+• Swing 编写的俄罗斯方块：https://github.com/HelloClyde/Tetris-Swing
+
+
+•小小记账本：https://qithub.com/xenv/SmallAccount （适合了解数据库的同学)
 
 
 
 # 自创问题
+## 几种生成对象的方式
+在 Java 中，**生成对象（实例化对象）的方法有很多种**，不同的方式适用于不同的场景。下面我将为你系统地总结常见的几种 **创建 Java 对象的方式**，并给出示例说明。
+###  使用 `new` 关键字（最常见）
+
+这是最常见的对象创建方式，直接调用构造函数。
+
+```java
+Person person = new Person("Alice");
+```
+
+##### 特点：
+- 简单直观。
+- 必须知道类名和参数。
+- 调用构造器时可以传递参数。
+
+
+
+### 使用反射机制（`Class.newInstance()` 或 `Constructor.newInstance()`）
+
+通过反射可以在运行时动态创建对象，适合框架开发或解耦设计。
+
+```java
+// 使用 Class.forName 加载类并创建实例（要求有无参构造器）
+Person person = (Person) Class.forName("com.example.Person").newInstance();
+
+// 或者使用 Constructor 来调用带参构造器
+Constructor<Person> constructor = Person.class.getConstructor(String.class);
+Person person = constructor.newInstance("Bob");
+```
+
+#### 特点：
+- 动态加载类。
+- 可以绕过编译期检查。
+- 性能略低于 `new`。
+
+
+
+### 使用 `clone()` 方法（克隆已有对象）
+
+前提是类必须实现 `Cloneable` 接口并重写 `clone()` 方法。
+
+```java
+Person person1 = new Person("Tom");
+Person person2 = (Person) person1.clone();
+```
+
+#### 特点：
+- 创建一个已有对象的副本。
+- 不调用构造方法。
+- 注意是浅拷贝还是深拷贝。
+
+---
+
+### 使用反序列化（从 IO 流中恢复对象）
+
+前提是类必须实现 `Serializable` 接口。
+
+```java
+// 序列化对象到文件
+ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("person.ser"));
+out.writeObject(person);
+
+// 反序列化读取对象
+ObjectInputStream in = new ObjectInputStream(new FileInputStream("person.ser"));
+Person person = (Person) in.readObject();
+```
+
+#### 特点：
+- 用于网络传输或持久化。
+- 不调用任何构造器。
+- 是一种深度拷贝。
+
+---
+
+### 使用工厂方法（Factory Method）
+
+由工厂类提供静态方法来创建对象，隐藏具体类的细节。
+
+```java
+public class PersonFactory {
+    public static Person createPerson(String name) {
+        return new Person(name);
+    }
+}
+
+// 使用
+Person person = PersonFactory.createPerson("Jerry");
+```
+
+#### 特点：
+- 控制对象创建逻辑。
+- 支持多态。
+- 常见于设计模式（如简单工厂、工厂方法等）。
+
+---
+
+### 使用依赖注入框架（如 Spring）
+
+Spring 等框架可以通过注解或配置自动管理对象生命周期。
+
+```java
+@Service
+class MyService { ... }
+
+@Component
+class MyComponent {
+    @Autowired
+    private MyService myService;
+}
+```
+
+#### 特点：
+- 自动注入依赖。
+- 不需要手动 `new`。
+- 支持控制反转（IoC）。
+
+---
+
+### 使用构建器模式（Builder Pattern）
+
+适用于属性多且复杂的对象创建。
+
+```java
+User user = new User.Builder("John", "Doe")
+                    .age(30)
+                    .phone("1234567890")
+                    .build();
+```
+
+#### 特点：
+- 提高可读性和扩展性。
+- 避免构造器爆炸。
+- 支持链式调用。
+
+---
+
+### 使用枚举（Enum 实例）
+
+Java 的枚举本质上就是一组固定的对象实例。
+
+```java
+enum Level {
+    LOW, MEDIUM, HIGH;
+}
+
+Level level = Level.HIGH;
+```
+
+#### 特点：
+- 枚举值本身就是对象。
+- 单例模式的一种实现。
+- 类型安全。
+
+
+
+### 使用 Optional（不是真正创建对象，但用于封装对象）
+
+虽然不是创建对象的方式，但在 Java 8+ 中常用作返回值包装对象，避免空指针。
+
+```java
+Optional<String> optional = Optional.of("Hello");
+optional.ifPresent(System.out::println);
+```
+
+
+
+### 使用 Lambda 表达式（适用于函数式接口）
+
+虽然不直接创建普通对象，但可以用来创建实现了函数式接口的对象。
+
+```java
+Runnable r = () -> System.out.println("Running...");
+```
+
+
+
 ## 对象的引用和对象的内容
 
 1. **对象的引用**：
@@ -9248,22 +9486,412 @@ public class Main {
 - 在某些语言中，字符串操作可能比其他数据结构慢。
 
 
-## 如何调用方法？
-- 类(接口)名直接调用（静态方法）
-- 实例变量直接调用（非静态方法）
-- @Override重写(子类中用)
-- A.super.eat();(有接口A,B，它们都有相同的默认方法，调用A的默认方法)
-- **接口默认方法的调用**
-    通过接口实例变量直接调用
-    通过创建子类的实例变量直接调用
-- 直接调用方法，使用的是其返回类型
-- 构造函数法
+## 调用方法的方式
+在Java中，调用方法的方式多种多样，根据不同的场景和需求选择合适的方法调用方式非常重要。以下是几种常见的调用方法的方式及其示例：
+
+### 1. **实例方法调用**
+   直接通过对象实例调用其方法。
+
+   ```java
+   public class Example {
+       public void instanceMethod() {
+           System.out.println("Instance Method Called");
+       }
+
+       public static void main(String[] args) {
+           Example example = new Example();
+           example.instanceMethod(); // 调用实例方法
+       }
+   }
+   ```
+
+### 2. **静态方法调用**
+   使用类名直接调用静态方法，不需要创建类的实例。
+
+   ```java
+   public class Example {
+       public static void staticMethod() {
+           System.out.println("Static Method Called");
+       }
+
+       public static void main(String[] args) {
+           Example.staticMethod(); // 静态方法调用
+       }
+   }
+   ```
+
+### 3. **接口实现的方法调用**
+   通过接口引用调用实现了该接口的具体类的方法。
+
+   ```java
+   public interface MyInterface {
+       void myMethod();
+   }
+
+   public class MyClass implements MyInterface {
+       @Override
+       public void myMethod() {
+           System.out.println("MyClass Implementation of MyMethod");
+       }
+   }
+
+   public class Main {
+       public static void main(String[] args) {
+           MyInterface myInterface = new MyClass();
+           myInterface.myMethod(); // 接口方法调用
+       }
+   }
+   ```
+
+### 4. **父类/子类方法调用（使用`super`关键字）**
+   在子类中调用父类被重写的方法。
+
+   ```java
+   class Parent {
+       public void show() {
+           System.out.println("Parent's show method");
+       }
+   }
+
+   class Child extends Parent {
+       @Override
+       public void show() {
+           super.show(); // 调用父类的方法
+           System.out.println("Child's show method");
+       }
+   }
+
+   public class Main {
+       public static void main(String[] args) {
+           Child child = new Child();
+           child.show();
+       }
+   }
+   ```
+
+### 5. **匿名内部类方法调用**
+   在匿名内部类中定义并立即使用的方法。
+
+   ```java
+   public class Main {
+       public static void main(String[] args) {
+           Runnable runnable = new Runnable() {
+               @Override
+               public void run() {
+                   System.out.println("Anonymous Inner Class Method Called");
+               }
+           };
+           Thread thread = new Thread(runnable);
+           thread.start();
+       }
+   }
+   ```
+
+### 6. **Lambda表达式方法调用**
+   使用Lambda表达式简化对函数式接口的方法调用。
+
+   ```java
+   import java.util.function.Consumer;
+
+   public class Main {
+       public static void main(String[] args) {
+           Consumer<String> consumer = (s) -> System.out.println(s);
+           consumer.accept("Hello, Lambda!"); // Lambda表达式方法调用
+       }
+   }
+   ```
+
+### 7. **反射调用方法**
+   使用Java反射机制动态调用方法。
+
+   ```java
+   import java.lang.reflect.Method;
+
+   public class Example {
+       public void reflectMethod() throws Exception {
+           Method method = getClass().getMethod("printMessage", null);
+           method.invoke(this, null); // 反射调用方法
+       }
+
+       public void printMessage() {
+           System.out.println("Reflection Method Called");
+       }
+
+       public static void main(String[] args) throws Exception {
+           new Example().reflectMethod();
+       }
+   }
+   ```
+
+### 8. **构建器模式中的方法调用**
+   在构建器模式中，通常会返回当前对象本身以便链式调用。
+
+   ```java
+   public class Person {
+       private String name;
+       private int age;
+
+       public Person setName(String name) {
+           this.name = name;
+           return this; // 返回当前对象
+       }
+
+       public Person setAge(int age) {
+           this.age = age;
+           return this; // 返回当前对象
+       }
+
+       public void display() {
+           System.out.println("Name: " + name + ", Age: " + age);
+       }
+
+       public static void main(String[] args) {
+           Person person = new Person().setName("John").setAge(30);
+           person.display();
+       }
+   }
+   ```
+
+以上是几种常见调用方法的方式实例，每种方式都有其特定的应用场景和优点，根据实际需要灵活选用。希望这些例子能帮助你更好地理解和应用不同的方法调用方式。
+
+## 不同类之间的方法调用方式
+在面向对象编程中，不同类之间通过多种方式实现方法调用。以下是Java中几种常见的不同类之间进行方法调用的方式：
+
+### 1. 直接实例化（通过创建对象）
+
+这是最常见的方式，一个类通过创建另一个类的对象来调用其方法。
+
 ```java
-String name =new String(request.getParameter("name").getBytes("ISO8859-1"),"UTF-8");
+public class ClassA {
+    public void methodA() {
+        System.out.println("Method A");
+    }
+}
+
+public class ClassB {
+    public void callMethodA() {
+        ClassA a = new ClassA();
+        a.methodA(); // 调用ClassA的方法
+    }
+}
 ```
 
+### 2. 静态方法调用
 
+如果方法被声明为`static`，可以直接通过类名调用，无需创建对象。
 
+```java
+public class ClassA {
+    public static void methodA() {
+        System.out.println("Static Method A");
+    }
+}
+
+public class ClassB {
+    public void callMethodA() {
+        ClassA.methodA(); // 调用静态方法
+    }
+}
+```
+
+### 3. 继承中的方法调用
+
+子类可以通过继承直接访问父类中的非私有方法，或使用`super`关键字调用父类的具体方法。
+
+```java
+class Parent {
+    public void parentMethod() {
+        System.out.println("Parent Method");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    public void parentMethod() {
+        super.parentMethod(); // 调用父类的方法
+        System.out.println("Child Method");
+    }
+}
+```
+
+### 4. 接口实现
+
+接口定义的方法必须由实现类提供具体实现，然后通过接口类型的引用来调用这些方法。
+
+```java
+interface MyInterface {
+    void interfaceMethod();
+}
+
+class MyClass implements MyInterface {
+    @Override
+    public void interfaceMethod() {
+        System.out.println("Interface Method Implementation");
+    }
+}
+
+// 使用
+MyInterface myInterface = new MyClass();
+myInterface.interfaceMethod(); // 调用实现类的方法
+```
+
+### 5. 使用内部类或匿名内部类
+
+内部类可以直接访问外部类的成员，而匿名内部类通常用于回调机制。
+
+```java
+public class OuterClass {
+    class InnerClass {
+        public void innerMethod() {
+            System.out.println("Inner Method");
+        }
+    }
+
+    public void callInnerMethod() {
+        InnerClass innerClass = new InnerClass();
+        innerClass.innerMethod(); // 调用内部类的方法
+    }
+}
+```
+
+### 6. 使用反射
+
+反射允许程序在运行时动态地获取类的信息以及操作对象，包括调用方法。
+
+```java
+import java.lang.reflect.Method;
+
+public class ReflectionExample {
+    public void reflectedMethod() throws Exception {
+        Class<?> cls = Class.forName("com.example.MyClass");
+        Object obj = cls.getDeclaredConstructor().newInstance();
+        
+        Method method = cls.getMethod("methodName", null);
+        method.invoke(obj, null); // 调用指定方法
+    }
+}
+```
+
+### 7. 使用依赖注入（如Spring框架）
+
+在Spring等框架中，可以通过依赖注入自动管理对象之间的依赖关系，并通过setter方法、构造函数或者注解配置来完成方法调用。
+
+```java
+@Service
+public class ServiceA {
+    public void serviceAMethod() {
+        System.out.println("Service A Method");
+    }
+}
+
+@Component
+public class ServiceB {
+    @Autowired
+    private ServiceA serviceA;
+    
+    public void useServiceA() {
+        serviceA.serviceAMethod(); // 调用ServiceA的方法
+    }
+}
+```
+
+### 8. 回调模式
+
+一种设计模式，其中一个对象提供对另一个对象方法的引用作为参数，后者将在适当时候调用前者的方法。
+
+```java
+public interface Callback {
+    void onCallback();
+}
+
+public class Caller {
+    public void performAction(Callback callback) {
+        // 执行某些操作后调用回调
+        callback.onCallback();
+    }
+}
+
+public class Listener implements Callback {
+    @Override
+    public void onCallback() {
+        System.out.println("Callback Invoked");
+    }
+}
+```
+
+每种方法调用方式都有其适用场景和特点，选择合适的方式可以提高代码的可维护性、灵活性和效率。根据实际需求和上下文环境，可以选择最合适的方式来组织你的代码结构。
+
+## 接口类型当方法返回类型
+在Java中，使用接口作为方法的返回类型是一种常见的做法，它有助于实现**解耦**和**提高代码的灵活性与可扩展性**。通过这种方式，你可以隐藏具体的实现细节，并且允许在不改变方法签名的情况下更改或扩展实现。
+
+### 示例
+
+假设我们有一个`Animal`接口和它的两个实现类`Dog`和`Cat`：
+
+```java
+public interface Animal {
+    void makeSound();
+}
+
+public class Dog implements Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Woof");
+    }
+}
+
+public class Cat implements Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Meow");
+    }
+}
+```
+
+现在，我们可以定义一个方法，其返回类型为`Animal`接口：
+
+```java
+public class AnimalFactory {
+
+    // 返回类型为接口 Animal
+    public static Animal getAnimal(boolean isDog) {
+        if (isDog) {
+            return new Dog(); // 实例化具体类
+        } else {
+            return new Cat(); // 实例化另一个具体类
+        }
+    }
+}
+```
+
+然后，在你的主程序中可以这样调用：
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Animal myPet = AnimalFactory.getAnimal(true); // 根据条件获取不同的动物实例
+        myPet.makeSound(); // 输出 "Woof"
+        
+        Animal anotherPet = AnimalFactory.getAnimal(false);
+        anotherPet.makeSound(); // 输出 "Meow"
+    }
+}
+```
+
+### 优点
+
+1. **灵活性**：通过接口返回对象，可以在不影响调用者的情况下更换实现。
+2. **多态性**：能够根据运行时的信息决定创建哪个具体类的对象。
+3. **依赖倒置原则**：高层模块不应该依赖于低层模块，二者都应该依赖于抽象（接口）。
+4. **易于测试**：更容易进行单元测试，因为可以轻松地模拟接口的行为。
+
+### 注意事项
+
+- **性能**：虽然使用接口增加了代码的灵活性，但可能会带来轻微的性能开销，因为需要额外的间接调用层次。
+- **具体实现**：尽管你返回的是接口类型，但在方法内部仍然需要选择并实例化具体的实现类。
+- **工厂模式**：上面的例子展示了简单的工厂模式的应用，这是一种设计模式，用来封装对象的创建过程，特别是在有多个可能的类需要被实例化的时候。
+
+这种技术非常适合用于构建大型、复杂的系统，其中组件之间的交互应该尽可能减少直接依赖，以促进模块化和维护性。
 ## 常见的字符串处理方式
 
 ### 1. 字符串拼接
@@ -10356,65 +10984,5 @@ public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
 
 - `<T>`：这是一个泛型类型参数，表示该方法是**泛型方法**。`T` 是一个占位符类型，在调用时会根据实际传入的参数或上下文推断出具体的类型。
 - `T`：这是方法的返回类型，意味着它将返回一个类型为 `T` 的值。
-# 面试基础问题
-1. **为什么重写 equals还要重写 hashcode?**
-   在Java中，当对象作为哈希表（如`HashMap`、`HashSet`）的键时，`equals`方法用于比较两个对象是否相等，而`hashCode`方法用于确定对象在哈希表中的存储位置。如果两个对象通过`equals`方法判断为相等，它们的`hashCode`值也必须相等，否则会导致哈希表中的数据结构出现问题，比如无法正确地检索到对象。因此，当你重写`equals`方法时，通常也需要重写`hashCode`方法以保持这两个方法的一致性。
-
-2. **`==`和`equals`比较的区别**
-   - `==`操作符用于比较两个对象的引用是否相同，即它们是否指向内存中的同一个位置。
-   - `equals`方法用于比较两个对象的内容是否相等。对于自定义类，如果不重写`equals`方法，默认比较的是对象的引用（即使用`==`）。但通常建议重写`equals`方法以实现基于对象内容的比较逻辑。
-
-3. **为什么有时会出现 `4.0-3.6=0.40000001` 这种现象?**
-   这种现象是由于浮点数在计算机中的表示方式引起的。浮点数（如`float`和`double`）是基于IEEE 754标准进行编码的，这可能导致精度问题。由于二进制浮点数无法精确表示某些十进制小数，因此在进行运算时可能会出现舍入误差。在实际编程中，如果需要精确的小数运算，推荐使用`BigDecimal`类。
-
-4. **`final`关键字的作用**
-   - 当`final`用于类时，表示该类不能被继承。
-   - 当`final`用于方法时，表示该方法不能被子类重写。
-   - 当`final`用于变量时，表示该变量一旦被赋值后，其值就不能被改变（基本数据类型变量的值不可变，引用类型变量的引用不可变，但引用的对象内容可以改变）。
-
-5. **介绍Java的集合类**
-   Java集合框架提供了用于存储和操作对象集合的接口和类。主要分为两大类：
-   - `Collection`接口：单列集合，包括`List`（有序集合，如`ArrayList`、`LinkedList`）、`Set`（不允许重复元素的集合，如`HashSet`、`LinkedHashSet`）和`Queue`（队列，如`PriorityQueue`）。
-   - `Map`接口：双列集合，用于存储键值对，如`HashMap`、`TreeMap`、`LinkedHashMap`等。
-
-6. **`ArrayList` 和 `LinkedList`的区别**
-   - `ArrayList`基于动态数组实现，适合随机访问元素，但在列表中间插入或删除元素时效率较低，因为需要移动后续所有元素。
-   - `LinkedList`基于双向链表实现，适合在列表中间进行插入和删除操作，因为不需要移动元素，只需要调整节点的链接。但在随机访问元素时效率较低，因为需要从头开始遍历链表。
-   - 选择`ArrayList`还是`LinkedList`取决于具体的应用场景和操作类型。如果频繁进行随机访问，推荐使用`ArrayList`；如果频繁进行插入和删除操作，推荐使用`LinkedList`。
-# 资源
-### [Java学习路线](https://www.code-nav.cn/course/1789189862986850306/section/1789190431398928386?contentType=text)
 
 
-### [IDEA中文教程](https://github.com/judasn/IntelliJ-IDEA-Tutorial )
-
-
-### [Java在线编译器](https://www.tutorialspoint.com/online_java_compiler.php)
-
-
-### [Java8小代码片段](https://github.com/hellokaton/30-seconds-of-java8)
-
-
-
-### 练手项目
-• Java 实现简单计算器：https://www.lanqiao.cn/courses/185
-
-• Eclipse 实现Java 编辑器：https://www.lanqiao.cn/courses/287
-
-一本糊涂账：https://how2j.cn/module/104.html
-
-
-• Java 五子棋：https://blog.csdn.net/cnlht/article/details/8176130
-
-
-• Java 中国象棋：https://blog.csdn.net/cnlht/article/details/8205733
-
-
-• JAVA GUI图书馆管理系统：https://github.com/uboger/LibraryManager
-
-• JAVA坦克大战小游戏：https://github.com/wangzhengyi/TankWar
-
-
-• Swing 编写的俄罗斯方块：https://github.com/HelloClyde/Tetris-Swing
-
-
-•小小记账本：https://qithub.com/xenv/SmallAccount （适合了解数据库的同学)
