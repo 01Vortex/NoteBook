@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "服务端/Java.md",
+                "file": "程序开发/微信小程序.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Java"
+              "title": "微信小程序"
             }
           }
         ],
@@ -168,9 +168,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "bc5ef2ce05f6c25b",
+  "active": "eaa7a00f576c74d5",
   "lastOpenFiles": [
     "服务端/Java.md",
+    "程序开发/微信小程序.md",
     "README.md",
     "项目设计/各层的设计/实体层.md",
     "Spring Framework/Spring Framework M & E/Spring Data JPA.md",
@@ -188,7 +189,7 @@
     "未命名.md",
     "服务端/Servlet.md",
     "服务端/JSP.md",
-    "安卓开发/Android.md",
+    "程序开发/Android.md",
     "Linux/Linux Ubuntu.md",
     "Linux/Linux CentOS7.md",
     "运维/Ubuntu24.04服务器.md",
@@ -196,7 +197,6 @@
     "服务端/Python.md",
     "服务端/Maven.md",
     "前端/Vue3.md",
-    "前端/JSON.md",
     "其他/IMG/Screenshot_20241012_023234.jpg",
     "其他/IMG/Screenshot_20241012_023647.jpg",
     "其他/问题",
