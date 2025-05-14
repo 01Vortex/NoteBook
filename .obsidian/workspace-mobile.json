@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
-                "mode": "source",
+                "file": "Spring Framework/Spring Framework M & E/SpringBoot2.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "SpringBoot2"
             }
           }
         ],
@@ -170,6 +170,7 @@
   },
   "active": "eaa7a00f576c74d5",
   "lastOpenFiles": [
+    "README.md",
     "其他/电脑问题.md",
     "其他/未命名.md",
     "电脑问题解决",
@@ -181,7 +182,6 @@
     "项目设计/功能实现",
     "服务端/Java.md",
     "服务端/微信小程序.md",
-    "README.md",
     "Spring Framework/Spring Framework M & E/Spring Data JPA.md",
     "项目设计/各层的设计/数据持久层(DAO).md",
     "项目开发/SpringBoot开发/各层的设计",
