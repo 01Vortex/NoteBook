@@ -11,14 +11,10 @@
             "id": "a66466fb1e723d78",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "安卓开发/Android.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Android"
+              "title": "新标签页"
             }
           },
           {
@@ -35,8 +31,7 @@
               "title": "与Spring Boot集成组件和技术大全"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -168,10 +163,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "eaa7a00f576c74d5",
+  "active": "a66466fb1e723d78",
   "lastOpenFiles": [
-    "Spring Framework/Spring Framework M & E/SpringBoot2.md",
+    "计算机基本工作原理.md",
     "项目开发/SpringBoot开发/与Spring Boot集成组件和技术大全.md",
+    "软考",
+    "Spring Framework/Spring Framework M & E/SpringBoot2.md",
     "README.md",
     "其他/电脑问题.md",
     "其他/未命名.md",
@@ -195,11 +192,9 @@
     "Spring Framework/Spring Framework M & E/Spring Cloud.md",
     "[SpringBoot2.md",
     "数据库/Mybatis.md",
-    "未命名.md",
     "服务端/Servlet.md",
     "服务端/JSP.md",
     "Linux/Linux Ubuntu.md",
-    "Linux/Linux CentOS7.md",
     "其他/IMG/Screenshot_20241012_023234.jpg",
     "其他/IMG/Screenshot_20241012_023647.jpg",
     "其他/问题",
@@ -214,7 +209,6 @@
     "z其他/IMG/IMG_20241010_113700.jpg",
     "z其他/IMG/Screenshot_20241012_023647.jpg",
     "z其他/IMG/Screenshot_20241012_023234.jpg",
-    "z其他/问题",
-    "z其他/IMG"
+    "z其他/问题"
   ]
 }
