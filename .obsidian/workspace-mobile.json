@@ -23,15 +23,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "项目开发/SpringBoot开发/与Spring Boot集成组件和技术大全.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "与Spring Boot集成组件和技术大全"
+              "title": "README"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -163,10 +164,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "a66466fb1e723d78",
+  "active": "eaa7a00f576c74d5",
   "lastOpenFiles": [
-    "计算机基本工作原理.md",
     "项目开发/SpringBoot开发/与Spring Boot集成组件和技术大全.md",
+    "计算机基本工作原理.md",
     "软考",
     "Spring Framework/Spring Framework M & E/SpringBoot2.md",
     "README.md",
