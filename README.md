@@ -6,10 +6,6 @@
 ---
 ## 🚀 动态统计  
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=01Vortex&show_icons=true&theme=light&hide_title=true&hide=prs,issues)  
-
-
-
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=01Vortex&layout=compact&theme=light)  
 
 ---
