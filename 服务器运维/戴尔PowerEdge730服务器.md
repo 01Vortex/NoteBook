@@ -6,44 +6,7 @@
 - 2077 blog
 - 2076 nav
 
-## CentOS7更换镜像源
-由于 CentOS 7 的官方仓库已经 **停止更新和维护**，你需要将默认仓库源替换为一个仍然提供 CentOS 7 软件包的镜像站。以下是使用阿里云镜像的步骤：
-
-### 备份原来的 repo 文件
-
-```bash
-sudo mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
-```
-
-### 下载阿里云提供的 CentOS-Base.repo 文件
-
-```bash
-sudo curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-```
-
-### 清除缓存并生成新缓存
-
-```bash
-sudo yum clean all
-sudo yum makecache
-```
-
-### 尝试更新
-
-```bash
-sudo yum update
-```
-
-
-## 无法连接本地数据库
-
-- 在MySQL配置文件的[mysqlid]添加，然后重启
-```
-bind-address = 127.0.0.1
-```
-
-
-
+# 服务器配置
 ## MySQL排序规则的选择
 在MySQL中，选择合适的排序规则（Collation）对于确保数据的正确排序、比较和索引至关重要。以下是选择MySQL数据库排序规则时需要考虑的关键因素和具体建议：
 
@@ -129,3 +92,12 @@ CREATE DATABASE multilingual_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 
 通过综合考虑这些因素，可以选择最适合你应用的MySQL排序规则。
 
+
+
+# 常见问题
+### 无法连接到本地服务器
+
+- 在MySQL配置文件的[mysqlid]添加，然后重启
+```
+bind-address = 127.0.0.1
+```
