@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://cloudreve.org/" alt="logo" ><img src="https://github.com/01Vortex/NoteBook/blob/main/notebook.png" width="1000px"/></a>
+  <a href="https://cloudreve.org/" alt="logo" ><img src="https://github.com/01Vortex/NoteBook/blob/main/notebook.png" width="150"/></a>
   <br>
   NoteBook
   <br>
