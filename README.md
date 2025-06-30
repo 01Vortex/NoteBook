@@ -1,7 +1,6 @@
 <a href="#" alt="logo" ><img src="https://github.com/01Vortex/NoteBook/blob/main/notebook.png" width="1000px"/></a>
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Author-01Vortex-orange.svg" alt="作者"></a>
-  <img src="https://img.shields.io/github/stars/01Vortex/01Vortex.github.io.svg?style=social">
   
   <br>
   <!-- Spring全家桶 -->
