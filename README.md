@@ -1,9 +1,5 @@
 <h1 align="center">
-  <br>
-  <a href="https://cloudreve.org/" alt="logo" ><img src="https://github.com/01Vortex/NoteBook/blob/main/notebook.png" width="150"/></a>
-  <br>
-  NoteBook
-  <br>
+  <a href="#" alt="logo" ><img src="https://github.com/01Vortex/NoteBook/blob/main/notebook.png" width="1000px"/></a>
 </h1>
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Author-01Vortex-orange.svg" alt="作者"></a>
