@@ -1,12 +1,126 @@
 ## 自定义端口
 - 2000 ssh
 - 2001 bt面板
-- 2002 lib存储库
-- 2003 redis
+- 2002 redis
+- 2020 存储库
 - 2077 blog
-- 2076 nav
+- 2076  nav
 
-# 服务器配置
+# 基本配置
+## 启用ssh远程连接
+### 开启SSH服务
+
+1. **安装OpenSSH服务器**（如果尚未安装的话）：
+   
+   打开终端，然后输入以下命令来安装OpenSSH服务器：
+   ```bash
+   sudo apt update
+   sudo apt install openssh-server
+   ```
+
+2. **启动SSH服务**：
+   
+   安装完成后，可以通过以下命令启动SSH服务：
+   ```bash
+   sudo systemctl start ssh
+   ```
+
+3. **启用SSH服务在系统启动时自动运行**：
+   
+   使用下面的命令让SSH服务随系统启动而自动运行：
+   ```bash
+   sudo systemctl enable ssh
+   ```
+
+### 配置使用Ed25519加密
+
+Ed25519是一种高效的椭圆曲线签名算法。要确保你的SSH配置支持Ed25519密钥对，可以进行如下配置：
+
+1. **生成Ed25519密钥对**（如果你还没有Ed25519密钥对的话）：
+   
+   在客户端机器上，你可以通过以下命令生成Ed25519类型的SSH密钥对：
+   ```bash
+   ssh-keygen -t ed25519
+   ```
+   按照提示操作完成密钥对的生成。
+
+2. **将公钥添加到Ubuntu 22.04服务器上的`~/.ssh/authorized_keys`文件中**：
+    ==注:==没有authorized_keys文件请先创建
+   
+   你需要将之前生成的`.pub`公钥文件内容复制到服务器的`~/.ssh/authorized_keys`文件中。可以通过以下命令实现（假设你已经在客户端机器上，并且目标用户是远程服务器上的同一用户）：
+   ```bash
+   ssh-copy-id -i ~/.ssh/id_ed25519.pub 用户名@服务器IP地址
+   ```
+
+3. **检查SSH配置文件是否允许Ed25519**：
+   
+   确保你的`/etc/ssh/sshd_config`文件中的配置允许Ed25519类型密钥登录。打开配置文件：
+   ```bash
+   sudo nano /etc/ssh/sshd_config
+   ```
+   查找或添加如下行：
+   ```
+   PubkeyAuthentication yes
+   HostKeyAlgorithms ssh-ed25519
+   ```
+   如果做了任何修改，记得保存更改后重启SSH服务以使更改生效：
+   ```bash
+   sudo systemctl restart ssh
+   ```
+
+### 安全配置
+加强SSH的安全性是保护服务器免受未授权访问的重要步骤。下面是一些推荐的做法来增强SSH的安全配置：
+
+1. **禁用密码登录**：
+   使用密钥对认证代替密码认证可以显著提高安全性，因为私钥泄露的难度远高于密码猜测或暴力破解。
+   - 编辑`/etc/ssh/sshd_config`文件，找到并修改以下行：
+     ```
+     PasswordAuthentication no
+     ```
+   - 确保你已经设置好公钥认证（如使用Ed25519密钥对），否则你可能会被锁定在系统之外。
+
+2. **更改默认端口**：
+   将SSH服务从默认的22端口更改为其他端口可以减少自动化的攻击尝试。
+   - 在`/etc/ssh/sshd_config`中添加或修改如下行：
+     ```
+     Port 新端口号
+     ```
+
+3. **限制用户访问**：
+   通过指定允许连接的用户来进一步限制访问。
+   - 同样在`/etc/ssh/sshd_config`中添加或修改：
+     ```
+     AllowUsers 用户名1 用户名2
+     ```
+   或者如果你希望根据组来控制访问权限：
+     ```
+     AllowGroups 组名
+     ```
+
+4. **禁用根用户的直接登录**：
+   禁止root用户直接登录，并使用普通账户登录后切换到root用户，可以增加额外的安全层。
+   - 修改`/etc/ssh/sshd_config`中的：
+     ```
+     PermitRootLogin no
+     ```
+
+
+5. **启用防火墙规则**：
+   配置防火墙仅允许特定IP地址访问SSH服务，或者至少限制尝试连接的频率。
+   
+6. **定期更新和审计**：
+   定期检查SSH配置，安装安全补丁，以及监控登录尝试的日志文件（如`/var/log/auth.log`）以发现任何可疑活动。
+
+完成以上配置后，记得重启SSH服务使更改生效：
+```bash
+sudo systemctl restart ssh
+```
+
+
+
+
+## X11图形页面转发
+# 数据库配置
 ## MySQL排序规则的选择
 在MySQL中，选择合适的排序规则（Collation）对于确保数据的正确排序、比较和索引至关重要。以下是选择MySQL数据库排序规则时需要考虑的关键因素和具体建议：
 
