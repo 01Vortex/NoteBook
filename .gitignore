@@ -16,6 +16,5 @@
 *.sx32fsl
 *.wx64fsl
 *.wx32fsl
-.obsidian
-/.obsidian
+*.obsidian
 /IMG
