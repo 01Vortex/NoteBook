@@ -1,4 +1,4 @@
-# TypeScript 完整学习笔记
+
 
 > TypeScript 是 JavaScript 的超集，添加了静态类型检查和其他特性
 > 本笔记涵盖从基础到高级的完整 TypeScript 知识体系
