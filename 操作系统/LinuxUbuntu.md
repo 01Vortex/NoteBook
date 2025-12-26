@@ -1,4 +1,4 @@
-# Ubuntu 22.04 LTS 完整学习笔记
+
 
 > Ubuntu 是目前最流行的 Linux 发行版之一，基于 Debian，以易用性著称。22.04 LTS（Long Term Support）是长期支持版本，官方支持到 2027 年，非常适合服务器和日常使用。
 >

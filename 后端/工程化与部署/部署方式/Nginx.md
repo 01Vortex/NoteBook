@@ -1,4 +1,4 @@
-# Nginx 完整学习笔记
+
 
 > Nginx 是一款高性能的 HTTP 和反向代理服务器，也是一个 IMAP/POP3/SMTP 代理服务器
 > 本笔记基于 Nginx 1.24.x 版本

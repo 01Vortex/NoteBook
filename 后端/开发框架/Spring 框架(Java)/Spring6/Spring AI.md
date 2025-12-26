@@ -1,7 +1,7 @@
 
 
 > Spring AI 是 Spring 生态系统中用于构建 AI 应用的框架，简化了与各种 AI 模型的集成
-> 本笔记基于 Java 17+ / Spring Boot 3.2.12 / Spring AI 1.0.0
+> 本笔记基于 Java 17+ Spring Boot 3.2.12 + Spring AI 1.0.0
 
 ---
 
