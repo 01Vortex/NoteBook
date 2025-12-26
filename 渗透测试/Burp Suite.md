@@ -1,4 +1,4 @@
-# Burp Suite 专业版完全指南
+
 
 > Burp Suite 是 Web 应用安全测试领域最强大的集成平台
 > 本笔记基于 Burp Suite Professional 版本，涵盖从入门到高级的完整知识体系

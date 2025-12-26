@@ -1,4 +1,3 @@
-# MyBatis 完整学习笔记
 
 > MyBatis 是一款优秀的持久层框架，支持自定义 SQL、存储过程以及高级映射
 > 本笔记基于 Java 8 + Spring Boot 2.7.18 + MyBatis 3.5.x
