@@ -64,12 +64,15 @@ my-project/
 ├── .husky/                    # Git hooks 配置
 │   ├── pre-commit             # 提交前检查（lint-staged）
 │   └── commit-msg             # 提交信息检查（commitlint）
+│
 ├── .vscode/                   # VSCode 配置（团队共享）
 │   ├── extensions.json        # 推荐插件
 │   ├── settings.json          # 编辑器设置
 │   └── launch.json            # 调试配置
+│
 ├── public/                    # 静态资源（不经过构建处理）
 │   └── favicon.ico
+│
 ├── src/
 │   ├── api/                   # API 接口层
 │   │   ├── modules/           # 按模块划分的接口
@@ -85,6 +88,7 @@ my-project/
 │   │   │   └── common/        # 公共接口（如字典、地区、配置）  
 │   │   ├── axios.ts           # Axios 封装
 │   │   └── index.ts           # 统一导出
+│   │
 │   ├── assets/                # 静态资源（经过构建处理）
 │   │   ├── images/            # 图片
 │   │   ├── fonts/             # 字体
@@ -94,6 +98,7 @@ my-project/
 │   │       ├── mixins.scss    # SCSS 混入
 │   │       ├── reset.scss     # 样式重置
 │   │       └── global.scss    # 全局样式
+│   │
 │   ├── components/            # 公共组件
 │   │   ├── ui/                # 更现代的命名
 │   │   │   ├── button/
@@ -117,48 +122,58 @@ my-project/
 │   │   │   │   └── index.ts
 │   │   │   └── index.ts 
 │   │   └── index.ts           # 顶层统一导出（可选）
+│   │
 │   ├── composables/           # 可复用的逻辑
 │   │   ├── useLocalStorage.ts # 本地存储封装
 │   │   ├── useModal.ts        # 弹窗控制逻辑
 │   │   ├── useUser.ts         # 用户相关逻辑（登录状态、权限等）
 │   │   └── index.ts
+│   │
 │   ├── constants/             # 常量定义
 │   │   ├── api.ts             # API 相关常量
 │   │   ├── storage.ts         # 存储 key 常量
 │   │   ├── enum.ts            # 枚举常量
 │   │   └── index.ts
+│   │
 │   ├── directives/            # 自定义指令
 │   │   ├── permission.ts      # 权限指令
 │   │   ├── loading.ts         # 加载指令
 │   │   └── index.ts
+│   │
 │   ├── layouts/               # 页面布局(路由级别复用（如所有后台页用 DefaultLayout）)
 │   │   ├── DefaultLayout.vue  # 默认布局
 │   │   └── TwoColLayout.vue   # 双列布局
+│   │
 │   ├── plugins/               # 插件配置
 │   │   ├── element-plus.ts    # Element Plus 配置
 │   │   └── index.ts
+│   │
 │   ├── router/                # 路由配置
 │   │   ├── modules/           # 路由模块
 │   │   │   ├── user.ts
 │   │   │   └── order.ts
 │   │   ├── guards.ts          # 路由守卫
 │   │   └── index.ts
+│   │
 │   ├── stores/                # Pinia 状态管理
 │   │   ├── modules/
 │   │   │   ├── user.ts        # 用户状态
 │   │   │   └── app.ts         # 应用状态
 │   │   └── index.ts
+│   │
 │   ├── types/                 # TypeScript 类型定义
 │   │   ├── api.d.ts           # API 相关类型
 │   │   ├── components.d.ts    # 组件类型
 │   │   ├── global.d.ts        # 全局类型扩展
 │   │   └── index.ts
+│   │
 │   ├── utils/                 # 工具函数
 │   │   ├── storage.ts         # 本地存储
 │   │   ├── validate.ts        # 验证函数
 │   │   ├── format.ts          # 格式化函数
 │   │   ├── auth.ts            # 认证相关
 │   │   └── index.ts
+│   │
 │   ├── views/                 # 页面
 │   │   ├── admin/             # 管理端页面
 │   │   │   ├── home/   
