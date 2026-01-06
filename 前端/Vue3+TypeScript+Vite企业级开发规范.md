@@ -1,4 +1,4 @@
-# Vue3 + TypeScript + Vite 企业级开发规范
+
 
 > 基于 Vue 3.4+ / TypeScript 5.x / Vite 5.x 的企业级前端开发最佳实践
 > 本笔记涵盖项目结构、代码风格、命名规范、组件设计、状态管理、性能优化及企业级开发踩坑经验
@@ -100,13 +100,15 @@ my-project/
 │   │       └── global.scss    # 全局样式
 │   │
 │   ├── components/            # 公共组件
-│   │   ├── ui/                # 更现代的命名
+│   │   ├── base/                # 更现代的命名
 │   │   │   ├── button/
-│   │   │   │   ├── BaseButton.vue
+│   │   │   │   ├── LikeButton.vue  # 点赞按钮 
+│   │   │   │   ├── CollectButton.vue # 收藏按钮
 │   │   │   │   └── index.ts   # 单组件导出（便于 tree-shaking）
 │   │   │   ├── input/
 │   │   │   │   ├── BaseInput.vue
 │   │   │   │   └── index.ts   # 单组件导出（便于 tree-shaking）
+│   │   │   ├── AppIcon.vue    # 图标组件
 │   │   │   └── index.ts       # 聚合导出所有 UI 组件
 │   │   │── layout/            # 布局组件
 │   │   │   ├── TheHeader.vue  #导航栏
@@ -177,7 +179,7 @@ my-project/
 │   ├── views/                 # 页面
 │   │   ├── admin/             # 管理端页面
 │   │   │   ├── home/   
-│   │   │   │   ├── components/       
+│   │   │   │   ├── components/ # 与AdminHome.vue紧密耦合的组件   
 │   │   │   │   │   ├── AdminDashboard.vue
 │   │   │   │   │   └── index.ts                                
 │   │   │   │   └── AdminHome.vue
@@ -223,10 +225,8 @@ my-project/
 # 核心依赖
 pnpm add vue-router@4 pinia @vueuse/core axios dayjs
 
-# UI 框架（选择其一）
-pnpm add element-plus @element-plus/icons-vue
-# 或
-pnpm add ant-design-vue@4
+# UI 框架（按需引入ui组件）
+pnpm add naive-ui 
 
 # 开发依赖
 pnpm add -D typescript @types/node
@@ -306,14 +306,14 @@ pnpm add -D vite-plugin-svg-icons
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ 文件命名规范                                                         │
+│ 文件命名规范                                                          │
 ├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
+│                                                                     │
 │ Vue 组件文件:                                                        │
-│ • 使用 PascalCase（大驼峰）                                          │
-│ • 多单词命名，避免单个单词（防止与 HTML 元素冲突）                   │
+│ • 使用 PascalCase（大驼峰）                                           │
+│ • 多单词命名，避免单个单词（防止与 HTML 元素冲突）                        │
 │ • 例: UserProfile.vue, SearchInput.vue, TheHeader.vue               │
-│                                                                      │
+│                                                                     │
 │ TypeScript/JavaScript 文件:                                         │
 │ • 使用 camelCase（小驼峰）                                           │
 │ • 例: userService.ts, useRequest.ts, formatDate.ts                  │
@@ -336,7 +336,6 @@ pnpm add -D vite-plugin-svg-icons
 ### 2.2 变量命名
 
 ```typescript
-// ✅ 好的命名 - 清晰表达意图
 
 // 布尔值：使用 is/has/can/should/will 前缀
 const isLoading = ref(false)
@@ -403,37 +402,36 @@ const num = 0                  // 什么数字？
 ### 2.3 组件命名
 
 ```typescript
-// ✅ 组件命名规范
 
 // 基础组件：使用 Base/App 前缀
 // 这些是项目中最基础的组件，会被频繁复用
-// components/base/BaseButton.vue
-// components/base/BaseInput.vue
-// components/base/BaseModal.vue
-// components/base/AppIcon.vue
+components/base/BaseButton.vue
+components/base/BaseInput.vue
+components/base/BaseModal.vue
+components/base/AppIcon.vue
 
 // 单例组件：使用 The 前缀
 // 整个应用只有一个实例的组件
-// components/layout/TheHeader.vue
-// components/layout/TheSidebar.vue
-// components/layout/TheFooter.vue
-// components/layout/TheNavbar.vue
+components/layout/TheHeader.vue
+components/layout/TheSidebar.vue
+components/layout/TheFooter.vue
+components/layout/TheNavbar.vue
 
 // 紧密耦合的组件：使用父组件名作为前缀
 // 这些组件只在特定父组件中使用
-// components/TodoList.vue
-// components/TodoListItem.vue
-// components/TodoListItemButton.vue
+components/TodoList.vue
+components/TodoListItem.vue
+components/TodoListItemButton.vue
 
 // 业务组件：使用业务模块名作为前缀
-// components/business/UserCard.vue
-// components/business/UserAvatar.vue
-// components/business/OrderTable.vue
-// components/business/ProductList.vue
+components/business/UserCard.vue
+components/business/UserAvatar.vue
+components/business/OrderTable.vue
+components/business/ProductList.vue
 
 // 页面私有组件：放在页面目录下的 components 文件夹
-// views/user/components/UserFilter.vue
-// views/user/components/UserTable.vue
+views/user/components/UserFilter.vue
+views/user/components/UserTable.vue
 
 // 组件注册和使用
 import UserProfile from './UserProfile.vue'
