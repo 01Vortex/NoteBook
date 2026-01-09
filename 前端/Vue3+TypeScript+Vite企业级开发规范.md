@@ -75,7 +75,7 @@ my-project/
 │
 ├── src/
 │   ├── api/                   # API 接口层
-│   │   ├── modules/           # 按模块划分的接口
+│   │   ├── client/            # 客户端
 │   │   │   ├── user/          # 用户域（不再是单个 user.ts）
 │   │   │   │   ├── profile.ts # 个人资料
 │   │   │   │   ├── auth.ts    # 登录/注册
@@ -85,7 +85,12 @@ my-project/
 │   │   │   │   ├── detail.ts  # 订单详情
 │   │   │   │   ├── refund.ts  # 退款相关
 │   │   │   │   └── index.ts
-│   │   │   └── common/        # 公共接口（如字典、地区、配置）  
+│   │   │   └── common/        # 公共接口（如字典、地区、配置） 
+│   │   ├── admin/             # 管理员端
+│   │   │   └── user/          # 管理员用户域(文件命名前缀为adm_)
+│   │   │       ├── adm_profile.ts # 管理员个人资料
+│   │   │       ├── adm_auth.ts    # 登录/注册
+│   │   │       └── index.ts
 │   │   ├── axios.ts           # Axios 封装
 │   │   └── index.ts           # 统一导出
 │   │
@@ -151,21 +156,23 @@ my-project/
 │   │   └── index.ts
 │   │
 │   ├── router/                # 路由配置
-│   │   ├── modules/           # 路由模块
+│   │   ├── client/           # 路由模块
 │   │   │   ├── user.ts
 │   │   │   └── order.ts
 │   │   ├── guards.ts          # 路由守卫
 │   │   └── index.ts
 │   │
 │   ├── stores/                # Pinia 状态管理
-│   │   ├── modules/
+│   │   ├── client/
 │   │   │   ├── user.ts        # 用户状态
 │   │   │   └── app.ts         # 应用状态
 │   │   └── index.ts
 │   │
-│   ├── types/                 # TypeScript 类型定义
+│   ├── types/                 # api类型定义
 │   │   ├── api.d.ts           # API 相关类型
 │   │   ├── components.d.ts    # 组件类型
+│   │   ├── global.d.ts        # 全局类型扩展
+│   │   ├── media.d.ts        # 全局类型扩展
 │   │   ├── global.d.ts        # 全局类型扩展
 │   │   └── index.ts
 │   │
