@@ -69,10 +69,10 @@ React 是一个用于构建用户界面的 JavaScript 库。它的核心思想�
 
 ```bash
 # 使用 Vite（推荐）
-npm create vite@latest my-react-app -- --template react-ts
+pnpm create vite@latest my-react-app -- --template react-ts
 cd my-react-app
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 
 # 使用 Create React App
 npx create-react-app my-app --template typescript

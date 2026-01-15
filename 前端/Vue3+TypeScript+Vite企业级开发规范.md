@@ -79,17 +79,20 @@ my-project/
 │   │   │   ├── user/          # 用户域（不再是单个 user.ts）
 │   │   │   │   ├── profile.ts # 个人资料
 │   │   │   │   ├── auth.ts    # 登录/注册
+│   │   │   │   ├── type.ts    # 用户api类型
 │   │   │   │   └── index.ts
 │   │   │   ├── order/
 │   │   │   │   ├── list.ts    # 订单列表
 │   │   │   │   ├── detail.ts  # 订单详情
 │   │   │   │   ├── refund.ts  # 退款相关
+│   │   │   │   ├── type.ts    # 订单api类型
 │   │   │   │   └── index.ts
 │   │   │   └── common/        # 公共接口（如字典、地区、配置） 
 │   │   ├── admin/             # 管理员端
 │   │   │   └── user/          # 管理员用户域(文件命名前缀为adm_)
 │   │   │       ├── adm_profile.ts # 管理员个人资料
 │   │   │       ├── adm_auth.ts    # 登录/注册
+│   │   │       ├── type.ts        # 管理员用户api类型
 │   │   │       └── index.ts
 │   │   ├── axios.ts           # Axios 封装
 │   │   └── index.ts           # 统一导出
@@ -168,11 +171,9 @@ my-project/
 │   │   │   └── app.ts         # 应用状态
 │   │   └── index.ts
 │   │
-│   ├── types/                 # api类型定义
+│   ├── types/                 # api通用类型定义
 │   │   ├── api.d.ts           # API 相关类型
 │   │   ├── components.d.ts    # 组件类型
-│   │   ├── global.d.ts        # 全局类型扩展
-│   │   ├── media.d.ts        # 全局类型扩展
 │   │   ├── global.d.ts        # 全局类型扩展
 │   │   └── index.ts
 │   │
