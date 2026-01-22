@@ -57,175 +57,107 @@ pnpm dev
 
 ### 1.2 推荐的项目结构
 
-一个清晰的项目结构是团队协作的基础。以下是企业级项目推荐的目录结构：
-
-```
+```text
 my-project/
-├── .husky/                    # Git hooks 配置
-│   ├── pre-commit             # 提交前检查（lint-staged）
-│   └── commit-msg             # 提交信息检查（commitlint）
-│
-├── .vscode/                   # VSCode 配置（团队共享）
-│   ├── extensions.json        # 推荐插件
-│   ├── settings.json          # 编辑器设置
-│   └── launch.json            # 调试配置
-│
-├── public/                    # 静态资源（不经过构建处理）
-│   └── favicon.ico
+├── public/                            # 静态资源（favicon 等）
+├── shared/                            # 双端通用的放这里
+│   ├── utils/                         # 双端通用工具
+│   ├── plugins/                       # 双端通用
+│   │   ├── naive-ui.ts                # naive-ui 配置
+│   │   └── index.ts
+│   ├── types/                          # 双端通用API类型
+│   │   ├── user.ts                    
+│   │   ├── order.ts                   
+│   │   └── index.ts
+│   ├── composables/                   # 双端通用复用的逻辑 
+│   │   ├── useLocalStorage.ts            
+│   │   └── index.ts                   
+│   └── constants/                     # 双端通用常量
 │
 ├── src/
-│   ├── api/                   # API 接口层
-│   │   ├── client/            # 客户端
-│   │   │   ├── user/          # 用户域（不再是单个 user.ts）
-│   │   │   │   ├── profile.ts # 个人资料
-│   │   │   │   ├── auth.ts    # 登录/注册
-│   │   │   │   ├── type.ts    # 用户api类型
-│   │   │   │   └── index.ts
+│   ├── admin/                         # 管理员端(具体结构同客户端结构)
+│   │   ├── assets/
+│   │   ├── api/
+│   │   ├── components/                # Admin 专属组件
+│   │   ├── views/                     # Admin 页面
+│   │   ├── router/                    # Admin 路由
+│   │   ├── stores/                    # Admin Pinia 状态
+│   │   ├── App.vue
+│   │   └── main.ts                    # Admin 入口
+│   │
+│   ├── client/                        # 客户端（独立应用）
+│   │   ├── assets/
+│   │   ├── api/                       # API 接口层
+│   │   │   ├── user/                  # 用户域
+│   │   │   │   ├── profile.ts         # 个人资料
+│   │   │   │   └── auth.ts            # 登录/注册
 │   │   │   ├── order/
-│   │   │   │   ├── list.ts    # 订单列表
-│   │   │   │   ├── detail.ts  # 订单详情
-│   │   │   │   ├── refund.ts  # 退款相关
-│   │   │   │   ├── type.ts    # 订单api类型
-│   │   │   │   └── index.ts
-│   │   │   └── common/        # 公共接口（如字典、地区、配置） 
-│   │   ├── admin/             # 管理员端
-│   │   │   └── user/          # 管理员用户域(文件命名前缀为adm_)
-│   │   │       ├── adm_profile.ts # 管理员个人资料
-│   │   │       ├── adm_auth.ts    # 登录/注册
-│   │   │       ├── type.ts        # 管理员用户api类型
-│   │   │       └── index.ts
-│   │   ├── axios.ts           # Axios 封装
-│   │   └── index.ts           # 统一导出
-│   │
-│   ├── assets/                # 静态资源（经过构建处理）
-│   │   ├── images/            # 图片
-│   │   ├── fonts/             # 字体
-│   │   ├── icons/             # 图标（SVG）
-│   │   └── styles/            # 样式文件
-│   │       ├── variables.scss # SCSS 变量
-│   │       ├── mixins.scss    # SCSS 混入
-│   │       ├── reset.scss     # 样式重置
-│   │       └── global.scss    # 全局样式
-│   │
-│   ├── components/            # 公共组件
-│   │   ├── base/                # 更现代的命名
-│   │   │   ├── button/
-│   │   │   │   ├── LikeButton.vue  # 点赞按钮 
-│   │   │   │   ├── CollectButton.vue # 收藏按钮
-│   │   │   │   └── index.ts   # 单组件导出（便于 tree-shaking）
-│   │   │   ├── input/
-│   │   │   │   ├── BaseInput.vue
-│   │   │   │   └── index.ts   # 单组件导出（便于 tree-shaking）
-│   │   │   ├── AppIcon.vue    # 图标组件
-│   │   │   └── index.ts       # 聚合导出所有 UI 组件
-│   │   │── layout/            # 布局组件
-│   │   │   ├── TheHeader.vue  #导航栏
-│   │   │   ├── TheFooter.vue  #页脚
-│   │   │   └── index.ts       # 统一导出
-│   │   │── shared/            # "Shared" 表示跨页面复用的业务组件
-│   │   │   ├── user-card/     # 组件文件夹化(利于扩展)
-│   │   │   │   ├── UserCard.vue
-│   │   │   │   ├── types.ts   # 组件专属类型
-│   │   │   │   └── index.ts
-│   │   │   ├── order-summary/
-│   │   │   │   ├── OrderSummary.vue
-│   │   │   │   └── index.ts
-│   │   │   └── index.ts 
-│   │   └── index.ts           # 顶层统一导出（可选）
-│   │
-│   ├── composables/           # 可复用的逻辑
-│   │   ├── useLocalStorage.ts # 本地存储封装
-│   │   ├── useModal.ts        # 弹窗控制逻辑
-│   │   ├── useUser.ts         # 用户相关逻辑（登录状态、权限等）
-│   │   └── index.ts
-│   │
-│   ├── constants/             # 常量定义
-│   │   ├── api.ts             # API 相关常量
-│   │   ├── storage.ts         # 存储 key 常量
-│   │   ├── enum.ts            # 枚举常量
-│   │   └── index.ts
-│   │
-│   ├── directives/            # 自定义指令
-│   │   ├── permission.ts      # 权限指令
-│   │   ├── loading.ts         # 加载指令
-│   │   └── index.ts
-│   │
-│   ├── layouts/               # 页面布局(路由级别复用（如所有后台页用 DefaultLayout）)
-│   │   ├── DefaultLayout.vue  # 默认布局
-│   │   └── TwoColLayout.vue   # 双列布局
-│   │
-│   ├── plugins/               # 插件配置
-│   │   ├── element-plus.ts    # Element Plus 配置
-│   │   └── index.ts
-│   │
-│   ├── router/                # 路由配置
-│   │   ├── client/           # 路由模块
-│   │   │   ├── user.ts
-│   │   │   └── order.ts
-│   │   ├── guards.ts          # 路由守卫
-│   │   └── index.ts
-│   │
-│   ├── stores/                # Pinia 状态管理
-│   │   ├── client/
-│   │   │   ├── user.ts        # 用户状态
-│   │   │   └── app.ts         # 应用状态
-│   │   └── index.ts
-│   │
-│   ├── types/                 # api通用类型定义
-│   │   ├── api.d.ts           # API 相关类型
-│   │   ├── components.d.ts    # 组件类型
-│   │   ├── global.d.ts        # 全局类型扩展
-│   │   └── index.ts
-│   │
-│   ├── utils/                 # 工具函数
-│   │   ├── storage.ts         # 本地存储
-│   │   ├── validate.ts        # 验证函数
-│   │   ├── format.ts          # 格式化函数
-│   │   ├── auth.ts            # 认证相关
-│   │   └── index.ts
-│   │
-│   ├── views/                 # 页面
-│   │   ├── admin/             # 管理端页面
-│   │   │   ├── home/   
-│   │   │   │   ├── components/ # 与AdminHome.vue紧密耦合的组件   
-│   │   │   │   │   ├── AdminDashboard.vue
-│   │   │   │   │   └── index.ts                                
-│   │   │   │   └── AdminHome.vue
+│   │   │   │   ├── list.ts            # 订单列表
+│   │   │   │   ├── detail.ts          # 订单详情
+│   │   │   │   └── refund.ts          # 退款相关
+│   │   │   ├── common/                # 公共接口（如字典、地区）
+│   │   │   ├── axios.ts               # Axios 封装
+│   │   │   └── index.ts               # 统一导出
+│   │   ├── components/                # 客户端公共组件
+│   │   │   ├── base/              
+│   │   │   │   ├── button/            # 按钮组件
+│   │   │   │   │   ├── LikeButton.vue  
+│   │   │   │   │   └── CollectButton.vue
+│   │   │   │   ├── input/             # 输入框组件
+│   │   │   │   │   └── CommentInput.vue
+│   │   │   │   └── AppIcon.vue        # 图标组件
+│   │   │   │── layout/                # 布局组件
+│   │   │   │   ├── TheHeader.vue  
+│   │   │   │   └── TheFooter.vue  
+│   │   │   └── index.ts               # 客户端公共组件统一导出
+│   │   ├── views/                     # Client 页面（首页、登录页等）
+│   │   │   ├── home/        
+│   │   │   │   ├── HomeWaterfall.vue  # 首页瀑布流组件(强耦合放home里面)
+│   │   │   │   ├── HomeSkeleton.vue   # 首页骨架屏组件                            
+│   │   │   │   └── HomePage.vue       # 首页面  
 │   │   │   ├── login/
-│   │   │   │   ├── components/
-│   │   │   │   └── AdminLogin.vue
-│   │   │   └── index.ts    # 管理端页面导出
-│   │   └── client/         # 客户端页面 
-│   │       ├── home/   
-│   │       │   ├── components/       
-│   │       │   │   ├── HomeWaterfall.vue
-│   │       │   │   ├── HomeSkeleton.vue
-│   │       │   │   └── index.ts                                
-│   │       │   └── Home.vue   
-│   │       ├── login/
-│   │       │   ├── components/
-│   │       │   └── Login.vue
-│   │       ├── error/
-│   │       │   ├── 404.vue
-│   │       │   └── 500.vue
-│   │       └── index.ts      #客户端页面导出    
-│   ├── App.vue               # 根组件
-│   └── main.ts               # 入口文件
-├── .env                      # 环境变量（所有环境）
-├── .env.development          # 开发环境变量
-├── .env.production           # 生产环境变量
-├── .env.staging              # 测试环境变量
-├── .eslintrc.cjs             # ESLint 配置
-├── .prettierrc               # Prettier 配置
-├── .stylelintrc.cjs          # Stylelint 配置
-├── .gitignore                # Git 忽略文件
-├── index.html                # HTML 模板
-├── package.json              # 项目配置
-├── pnpm-lock.yaml            # 依赖锁定
-├── tsconfig.json             # TypeScript 配置
-├── tsconfig.node.json        # Node 环境 TS 配置
-└── vite.config.ts            # Vite 配置
+│   │   │   │   ├── ForgotPassWord.vue # 忘记密码组件
+│   │   │   │   ├── Register.vue       # 注册组件          
+│   │   │   │   └── LoginPage.vue      # 登录页
+│   │   │   ├── error/
+│   │   │   │   ├── 404.vue
+│   │   │   │   └── 500.vue
+│   │   │   └── index.ts               # 客户端页面导出    
+│   │   ├── composables/               # 可复用的逻辑 
+│   │   │   ├── useUser.ts            
+│   │   │   └── index.ts
+│   │   ├── router/                    # 路由配置
+│   │   │   ├── user.ts
+│   │   │   ├── order.ts
+│   │   │   ├── guards.ts              
+│   │   │   └── index.ts
+│   │   ├── stores/                    # Pinia 状态管理
+│   │   │   ├── user.ts                
+│   │   │   ├── app.ts                 
+│   │   │   └── index.ts               # 统一导出
+│   │   ├── constants/                 # 常量定义
+│   │   │   ├── api.ts                 
+│   │   │   ├── storage.ts             
+│   │   │   ├── enum.ts                
+│   │   │   └── index.ts
+│   │   ├── utils/                     # 工具函数
+│   │   │   ├── storage.ts             
+│   │   │   ├── validate.ts            
+│   │   │   ├── format.ts              
+│   │   │   └── index.ts               # 统一导出
+│   │   ├── App.vue
+│   │   └── main.ts                    # Client 入口
+│   └── env.d.ts
+│
+├── index.html                         # Vite 默认入口模板（用于开发）
+├── admin.html                         # Admin 入口 HTML
+├── client.html                        # Client 入口 HTML
+├── vite.config.ts                     # Vite 多入口配置
+├── tsconfig.json
+├── package.json
+└── README.md
 ```
+
 
 ### 1.3 核心依赖安装
 
