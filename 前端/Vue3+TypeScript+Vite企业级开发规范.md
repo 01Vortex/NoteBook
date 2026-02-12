@@ -65,7 +65,7 @@ my-project/
 │   ├── plugins/                       # 双端通用
 │   │   ├── naive-ui.ts                # naive-ui 配置
 │   │   └── index.ts
-│   ├── types/                          # 双端通用API类型
+│   ├── types/                         # 双端通用API类型
 │   │   ├── user.ts                    
 │   │   ├── order.ts                   
 │   │   └── index.ts
